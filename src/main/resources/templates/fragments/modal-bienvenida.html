@@ -1,0 +1,264 @@
+<!-- Fragment del Modal de Bienvenida -->
+<div th:fragment="modalBienvenida">
+
+    <!-- MODAL DE BIENVENIDA -->
+    <div class="welcome-modal-overlay" id="welcomeModal">
+        <div class="welcome-modal">
+            <button class="welcome-modal-close" onclick="closeWelcomeModal()">
+                <i class="bi bi-x-lg"></i>
+            </button>
+            <div class="welcome-modal-header">
+                <span class="icon">🏋️</span>
+                <h2>¡Bienvenido a GymTrack!</h2>
+                <p>Mas que una tienda, tu companero de entrenamiento</p>
+            </div>
+            <div class="welcome-modal-body">
+                <ul class="welcome-features">
+                    <li>
+                        <i class="bi bi-calendar-check-fill"></i>
+                        <span>Crea tu agenda de rutinas personalizada</span>
+                    </li>
+                    <li>
+                        <i class="bi bi-graph-up-arrow"></i>
+                        <span>Seguimiento detallado de tu progreso</span>
+                    </li>
+                    <li>
+                        <i class="bi bi-people-fill"></i>
+                        <span>Conecta con entrenadores profesionales</span>
+                    </li>
+                    <li>
+                        <i class="bi bi-bag-check-fill"></i>
+                        <span>Encuentra los mejores productos fitness</span>
+                    </li>
+                </ul>
+                <div class="welcome-modal-actions">
+                    <!-- CORREGIDO: Ahora va a formulario si está logueado, sino a registro -->
+                    <a th:href="${session.usuarioLogueado != null} ? @{/formulario} : @{/registro-agenda}" class="btn-create-routine">
+                        <i class="bi bi-rocket-takeoff-fill"></i>
+                        <span th:text="${session.usuarioLogueado != null} ? 'Crear mi rutina ahora' : 'Registrarme y crear rutina'"></span>
+                    </a>
+                    <button class="btn-continue-shopping" onclick="closeWelcomeModal()">
+                        Continuar viendo la tienda
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ESTILOS DEL MODAL -->
+    <style>
+        .welcome-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .welcome-modal-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .welcome-modal {
+            background: white;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.4s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .welcome-modal-header {
+            background: linear-gradient(135deg, #1a237e 0%, #3949ab 100%);
+            color: white;
+            padding: 30px 25px;
+            text-align: center;
+        }
+
+        .welcome-modal-header .icon {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .welcome-modal-header h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .welcome-modal-header p {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin: 0;
+        }
+
+        .welcome-modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .welcome-modal-close:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: rotate(90deg);
+        }
+
+        .welcome-modal-body {
+            padding: 30px 25px;
+        }
+
+        .welcome-features {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 25px 0;
+        }
+
+        .welcome-features li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.95rem;
+            color: #444;
+        }
+
+        .welcome-features li:last-child {
+            border-bottom: none;
+        }
+
+        .welcome-features li i {
+            color: #2e7d32;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+
+        .welcome-modal-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn-create-routine {
+            background: linear-gradient(135deg, #ff9800 0%, #ffb74d 100%);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .btn-create-routine:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 152, 0, 0.4);
+            color: white;
+        }
+
+        .btn-create-routine i {
+            font-size: 1.3rem;
+        }
+
+        .btn-continue-shopping {
+            background: transparent;
+            color: #666;
+            border: none;
+            padding: 10px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            text-decoration: underline;
+        }
+
+        .btn-continue-shopping:hover {
+            color: #1a237e;
+        }
+
+        @media (max-width: 768px) {
+            .welcome-modal {
+                width: 95%;
+                margin: 10px;
+            }
+
+            .welcome-modal-header {
+                padding: 25px 20px;
+            }
+
+            .welcome-modal-header h2 {
+                font-size: 1.5rem;
+            }
+
+            .welcome-modal-body {
+                padding: 25px 20px;
+            }
+        }
+    </style>
+
+    <!-- SCRIPT DEL MODAL -->
+    <script>
+        function closeWelcomeModal() {
+            document.getElementById('welcomeModal').classList.add('hidden');
+            sessionStorage.setItem('welcomeModalShown', 'true');
+        }
+
+        window.addEventListener('load', function() {
+            if (sessionStorage.getItem('welcomeModalShown') === 'true') {
+                document.getElementById('welcomeModal').classList.add('hidden');
+            }
+        });
+
+        document.getElementById('welcomeModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeWelcomeModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeWelcomeModal();
+            }
+        });
+    </script>
+
+</div>

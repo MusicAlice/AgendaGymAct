@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1. 0">
+    <title>Mi Perfil - GymTrack</title>
+<link href="https://cdn.jsdelivr. net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #1a237e;
+            --secondary-color: #3949ab;
+            --accent-color: #ff6f00;
+            --danger-color: #dc3545;
+            --success-color: #28a745;
+            --light-bg: #f5f5f5;
+            --sidebar-width: 280px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--light-bg);
+            min-height: 100vh;
+        }
+
+        /* ========== TOP BAR ========== */
+        .top-bar {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+      .back-link {
+    color: #333;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    background: white;
+    padding: 10px 18px;
+    border-radius: 25px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: all 0. 3s ease;
+}
+
+.back-link:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transform: translateY(-1px);
+}
+
+        .top-bar-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .top-btn {
+            position: relative;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.3);
+            color: white;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .top-btn:hover {
+            background: white;
+            color: var(--primary-color);
+        }
+
+        .top-btn i {
+            font-size: 1.2rem;
+        }
+
+        .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--accent-color);
+            color: white;
+            font-size: 0.65rem;
+            min-width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* ========== LAYOUT ========== */
+        .main-container {
+            display: flex;
+            margin-top: 72px;
+            min-height: calc(100vh - 72px);
+        }
+
+        /* ========== SIDEBAR ========== */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+            position: fixed;
+            top: 72px;
+            left: 0;
+            bottom: 0;
+            overflow-y: auto;
+            padding: 30px 20px;
+        }
+
+        .profile-header {
+            text-align: center;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 25px;
+        }
+
+        .profile-photo-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 15px;
+        }
+
+        .profile-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--primary-color);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+        }
+
+        .profile-photo img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .change-photo-btn {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background: var(--accent-color);
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: 3px solid white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .change-photo-btn:hover {
+            transform: scale(1.1);
+            background: #ff8f00;
+        }
+
+        .profile-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .profile-email {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .profile-member-since {
+            font-size: 0.8rem;
+            color: #999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        /* ========== MENU ========== */
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .menu-item {
+            margin-bottom: 5px;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            color: #555;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .menu-link:hover {
+            background: #f0f0f0;
+            color: var(--primary-color);
+        }
+
+        .menu-link.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .menu-link i {
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        .menu-badge {
+            margin-left: auto;
+            background: var(--accent-color);
+            color: white;
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .menu-link.active .menu-badge {
+            background: white;
+            color: var(--primary-color);
+        }
+
+        .menu-divider {
+            height: 1px;
+            background: #eee;
+            margin: 20px 0;
+        }
+
+        .menu-link.danger {
+            color: var(--danger-color);
+        }
+
+        .menu-link.danger:hover {
+            background: #fff5f5;
+        }
+
+        /* ========== CONTENT AREA ========== */
+        .content-area {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 30px;
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: var(--primary-color);
+        }
+
+        /* ========== CARDS ========== */
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        /* ========== FORMS ========== */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(26, 35, 126, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(26, 35, 126, 0.3);
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* ========== WELCOME SECTION ========== */
+        .welcome-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        /* ========== HISTORIAL PRODUCTOS ========== */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+        }
+
+        .product-card-mini {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0. 05);
+            transition: all 0.3s ease;
+        }
+
+        .product-card-mini:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .product-card-mini img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            background: #f5f5f5;
+        }
+
+        .product-card-mini .product-info {
+            padding: 12px;
+        }
+
+        .product-card-mini .product-name {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #333;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .product-card-mini .product-price {
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+
+        /* ========== EMPTY STATE ========== */
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #999;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .empty-state p {
+            font-size: 1.1rem;
+        }
+
+        /* ========== MODAL ========== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 450px;
+            width: 90%;
+            animation: modalIn 0.3s ease;
+        }
+
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-title.danger {
+            color: var(--danger-color);
+        }
+
+        .modal-text {
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                position: relative;
+                top: 0;
+            }
+
+            .content-area {
+                margin-left: 0;
+            }
+
+            .main-container {
+                flex-direction: column;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.header-content h1 {
+    margin: 0;
+}
+
+.agenda-btn {
+    background: linear-gradient(135deg, #ff9800 0%, #ffb74d 100%);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    box-shadow: 0 4px 15px rgba(255, 152, 0, 0. 3);
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.agenda-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
+}
+
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    color: #155724;
+    border: 1px solid #28a745;
+}
+
+.alert-error {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    color: #721c24;
+    border: 1px solid #dc3545;
+}
+/* ========== ALERTAS ========== */
+.alert {
+    padding: 15px 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    color: #155724;
+    border: 1px solid #28a745;
+}
+
+.alert-error {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    color: #721c24;
+    border: 1px solid #dc3545;
+}
+/* ========== VALIDACIÓN DE CAMPOS ========== */
+.form-label.required::after {
+    content: " *";
+    color: var(--danger-color);
+}
+
+.form-control.is-invalid {
+    border-color: var(--danger-color);
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+}
+
+.form-control.is-valid {
+    border-color: var(--success-color);
+}
+
+.invalid-feedback {
+    color: var(--danger-color);
+    font-size: 0.85rem;
+    margin-top: 5px;
+    display: none;
+}
+
+.invalid-feedback.show {
+    display: block;
+}
+
+.telefono-container {
+    display: flex;
+    align-items: stretch;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+    background: white;
+}
+
+.telefono-container:focus-within {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(26, 35, 126, 0.1);
+}
+
+.telefono-container.is-invalid {
+    border-color: var(--danger-color);
+}
+
+.telefono-container.is-valid {
+    border-color: var(--success-color);
+}
+
+.telefono-prefix {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 15px;
+    background: #f8f9fa;
+    border-right: 1px solid #e0e0e0;
+}
+
+.telefono-input {
+    flex: 1;
+    border: none;
+    padding: 12px 15px;
+    font-size: 1rem;
+    outline: none;
+}
+
+.telefono-feedback {
+    font-size: 0.85rem;
+    margin-top: 6px;
+}
+
+.telefono-feedback.valid {
+    color: var(--success-color);
+}
+
+.telefono-feedback.invalid {
+    color: var(--danger-color);
+}
+
+.btn-primary:disabled {
+    opacity: 0. 6;
+    cursor: not-allowed;
+    transform: none;
+}
+/* Asegura que .password-container envuelve input y botón */
+.password-container {
+    position: relative;
+    display: block;
+}
+
+/* El input ocupa todo el ancho */
+.password-container .form-control {
+    padding-right: 44px; /* espacio para el botón */
+    box-sizing: border-box;
+}
+
+/* Botón ojo: dentro del input, a la derecha */
+.password-container .toggle-password-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    font-size: 1rem;
+    line-height: 1;
+    color: #666;
+}
+
+/* Si quieres un estilo de botón redondeado */
+.password-container .toggle-password-btn {
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+}
+
+/* Evitar que el botón cause salto de línea en móviles */
+.password-container .toggle-password-btn:focus { outline: none; box-shadow: 0 0 0 3px rgba(26,35,126,0.08); }
+    </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+    <a href="/" class="back-link">
+        <i class="bi bi-arrow-left"></i>
+        <span>Volver a la tienda</span>
+    </a>
+    <div class="top-bar-actions">
+       <a href="/notificaciones" class="top-btn">
+    <span style="font-size: 1.3rem;">🔔</span>
+    <span class="badge" th:text="${notificacionesCount}">0</span>
+</a>
+<a href="/carrito" class="top-btn">
+    <span style="font-size: 1.3rem;">🛒</span>
+    <span class="badge" th:text="${carritoCount}">0</span>
+</a>
+    </div>
+</div>
+
+<!-- MAIN CONTAINER -->
+<div class="main-container">
+    
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="profile-header">
+            <div class="profile-photo-container">
+                <div class="profile-photo">
+                    <img th:if="${usuario.fotoUrl != null}" th:src="${usuario. fotoUrl}" alt="Foto de perfil">
+                    <i th:if="${usuario.fotoUrl == null}" class="bi bi-person-fill"></i>
+                </div>
+                <button class="change-photo-btn" onclick="abrirCambiarFoto()">
+                    <i class="bi bi-camera-fill"></i>
+                </button>
+            </div>
+            <div class="profile-name" th:text="${usuario.nombre}">Juan Pérez</div>
+            <div class="profile-email" th:text="${usuario.email}">juan@email.com</div>
+            <div class="profile-member-since">
+                <i class="bi bi-calendar-check"></i>
+                <span>Miembro desde <span th:text="${#temporals.format(usuario.fechaRegistro, 'MMMM yyyy')}">Enero 2025</span></span>
+            </div>
+        </div>
+
+        <ul class="sidebar-menu">
+            <li class="menu-item">
+                <a href="#" class="menu-link active" data-section="bienvenida">
+                    <i class="bi bi-house"></i>
+                    <span>Inicio</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link" data-section="editar-perfil">
+                    <i class="bi bi-person"></i>
+                    <span>Editar perfil</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link" data-section="cambiar-clave">
+                    <i class="bi bi-key"></i>
+                    <span>Cambiar contraseña</span>
+                </a>
+            </li>
+            
+            <div class="menu-divider"></div>
+            
+            <li class="menu-item">
+                <a href="#" class="menu-link" data-section="pedidos">
+                    <i class="bi bi-bag"></i>
+                    <span>Mis pedidos</span>
+                    <span class="menu-badge" th:text="${pedidosCount}">0</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link" data-section="lista-deseos">
+                    <i class="bi bi-heart"></i>
+                    <span>Lista de deseos</span>
+                    <span class="menu-badge" th:text="${deseosCount}">0</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link" data-section="historial">
+                    <i class="bi bi-clock-history"></i>
+                    <span>Historial</span>
+                </a>
+            </li>
+            
+            <div class="menu-divider"></div>
+            
+            <li class="menu-item">
+                <a href="/logout" class="menu-link">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>Cerrar sesión</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link danger" onclick="confirmarEliminarCuenta()">
+                    <i class="bi bi-trash"></i>
+                    <span>Eliminar mi cuenta</span>
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- CONTENT AREA -->
+    <main class="content-area">
+        
+        <!-- SECCIÓN: BIENVENIDA -->
+        <div id="bienvenida" class="content-section active">
+            <div class="header-content">
+    <h1>¡Hola, <span th:text="${usuario.nombre}">Usuario</span>!</h1>
+<a th:href="${tieneAgenda ? '/agenda' : '/formulario'}" 
+   class="agenda-btn" 
+   th:title="${tieneAgenda ? '📊 Ver tu agenda y rutinas' : '✨ ¡Solo te tomará 5 minutos crear tu rutina personalizada! '}">
+    <span th:text="${tieneAgenda ? '📅 Ver mi agenda' : '📅 ¿Quieres crear tu rutina?'}"></span>
+</a>
+</div>
+            
+
+<div th:if="${param. error}" class="alert alert-error">
+    <span th:if="${param.error[0] == 'perfil'}">❌ Error al actualizar el perfil.  Intenta de nuevo.</span>
+    <span th:if="${param.error[0] == 'clave'}">❌ Error al cambiar la contraseña. </span>
+    <span th:if="${param.error[0] == 'clave-incorrecta'}">❌ La contraseña actual es incorrecta.</span>
+    <span th:if="${param. error[0] == 'claves-no-coinciden'}">❌ Las contraseñas nuevas no coinciden.</span>
+    <span th:if="${param. error[0] == 'foto'}">❌ Error al subir la foto.  Intenta de nuevo.</span>
+    <span th:if="${param. error[0] == 'eliminar'}">❌ Error al eliminar la cuenta. </span>
+</div>
+<!-- MENSAJES DE ÉXITO/ERROR -->
+<div th:if="${param.exito}" class="alert alert-success">
+    <span th:if="${param.exito[0] == 'perfil'}">✅ ¡Perfil actualizado correctamente!</span>
+    <span th:if="${param.exito[0] == 'clave'}">✅ ¡Contraseña cambiada correctamente!</span>
+    <span th:if="${param.exito[0] == 'foto'}">✅ ¡Foto de perfil actualizada!</span>
+</div>
+
+<div th:if="${param. error}" class="alert alert-error">
+    <span th:if="${param.error[0] == 'perfil'}">❌ Error al actualizar el perfil.  Intenta de nuevo.</span>
+    <span th:if="${param.error[0] == 'clave'}">❌ Error al cambiar la contraseña. </span>
+    <span th:if="${param.error[0] == 'clave-incorrecta'}">❌ La contraseña actual es incorrecta.</span>
+    <span th:if="${param. error[0] == 'claves-no-coinciden'}">❌ Las contraseñas nuevas no coinciden.</span>
+    <span th:if="${param. error[0] == 'foto'}">❌ Error al subir la foto.  Intenta de nuevo.</span>
+    <span th:if="${param. error[0] == 'eliminar'}">❌ Error al eliminar la cuenta. </span>
+</div>
+<div class="card">
+    <p style="color: #666; font-size: 1.1rem;">
+        Bienvenido a tu perfil. Desde aquí puedes gestionar tu cuenta, ver tus pedidos y mucho más.
+    </p>
+</div>
+            <div class="welcome-stats">
+                <div class="stat-card">
+                    <div class="stat-icon">📦</div>
+                    <div class="stat-value" th:text="${pedidosCount}">0</div>
+                    <div class="stat-label">Pedidos realizados</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">❤️</div>
+                    <div class="stat-value" th:text="${deseosCount}">0</div>
+                    <div class="stat-label">En lista de deseos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">👁️</div>
+                    <div class="stat-value" th:text="${historialCount}">0</div>
+                    <div class="stat-label">Productos visitados</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🛒</div>
+                    <div class="stat-value" th:text="${carritoCount}">0</div>
+                    <div class="stat-label">En el carrito</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN: EDITAR PERFIL -->
+<div id="editar-perfil" class="content-section">
+    <h2 class="section-title">
+        <i class="bi bi-person"></i>
+        Editar perfil
+    </h2>
+    
+    <div class="card">
+        <form th:action="@{/mi-perfil/actualizar}" method="post" id="formEditarPerfil">
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label required">Nombre completo</label>
+                    <input type="text" name="nombre" id="nombreInput" class="form-control" 
+                           th:value="${usuario.nombre}" required>
+                    <div class="invalid-feedback" id="nombre-error"></div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label required">Correo electrónico gmail</label>
+                    <input type="email" name="email" id="emailInput" class="form-control" 
+                           th:value="${usuario.email}" required>
+                    <div class="invalid-feedback" id="email-error"></div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Teléfono (Colombia)</label>
+                    <div class="telefono-container" id="telefonoContainer">
+                        <div class="telefono-prefix">
+                            <span>🇨🇴</span>
+                            <span>+57</span>
+                        </div>
+                        <input type="tel" name="telefono" id="telefonoInput" class="telefono-input" 
+                               th:value="${usuario.telefono}" placeholder="300 123 4567"
+                               maxlength="10">
+                    </div>
+                    <div id="telefonoFeedback" class="telefono-feedback"></div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label required">Fecha de nacimiento</label>
+                    <input type="date" name="fechaNacimiento" id="fechaNacimientoInput" class="form-control" 
+                           th:value="${usuario.fechaNacimiento}" required>
+                    <div class="invalid-feedback" id="fecha-error"></div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary" id="btnGuardarPerfil" disabled>
+                <i class="bi bi-check-lg"></i>
+                Guardar cambios
+            </button>
+        </form>
+    </div>
+</div>
+    <!-- SECCIÓN: CAMBIAR CONTRASEÑA -->
+<div id="cambiar-clave" class="content-section">
+    <h2 class="section-title">
+        <i class="bi bi-key"></i>
+        Cambiar contraseña
+    </h2>
+
+    <div class="card">
+        <form id="formCambiarClave" novalidate>
+            <div class="form-group">
+                <label class="form-label required">Contraseña actual</label>
+                <div class="password-container">
+                    <input type="password" id="claveActual" class="form-control" autocomplete="current-password" required>
+                    <button type="button" class="toggle-password-btn" data-target="claveActual" aria-label="Mostrar/Ocultar">👁️</button>
+                </div>
+                <div class="invalid-feedback" id="claveActual-error"></div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label required">Nueva contraseña</label>
+                <div class="password-container">
+                    <input type="password" id="claveNueva" class="form-control" autocomplete="new-password" required>
+                    <button type="button" class="toggle-password-btn" data-target="claveNueva" aria-label="Mostrar/Ocultar">👁️</button>
+                </div>
+                <div class="password-requirements" id="cambiar-password-requirements">
+                    <div class="requirement invalid" id="c-req-length"><span class="requirement-icon">❌</span> Mínimo 12 caracteres</div>
+                    <div class="requirement invalid" id="c-req-uppercase"><span class="requirement-icon">❌</span> Al menos una mayúscula</div>
+                    <div class="requirement invalid" id="c-req-lowercase"><span class="requirement-icon">❌</span> Al menos una minúscula</div>
+                    <div class="requirement invalid" id="c-req-number"><span class="requirement-icon">❌</span> Al menos un número</div>
+                    <div class="requirement invalid" id="c-req-special"><span class="requirement-icon">❌</span> Al menos un símbolo (!@#$%^&*)</div>
+                </div>
+                <div class="invalid-feedback" id="claveNueva-error"></div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label required">Confirmar nueva contraseña</label>
+                <div class="password-container">
+                    <input type="password" id="claveConfirmar" class="form-control" required>
+                    <button type="button" class="toggle-password-btn" data-target="claveConfirmar" aria-label="Mostrar/Ocultar">👁️</button>
+                </div>
+                <div class="invalid-feedback" id="claveConfirmar-error"></div>
+            </div>
+
+            <div class="form-group">
+                <button id="btnCambiarClave" type="submit" class="btn btn-primary" disabled>
+                    <i class="bi bi-check-lg"></i> Cambiar contraseña
+                </button>
+            </div>
+
+            <div id="cambiar-clave-mensaje" style="margin-top:10px;display:none;"></div>
+        </form>
+    </div>
+</div>
+
+        <!-- SECCIÓN: MIS PEDIDOS -->
+        <div id="pedidos" class="content-section">
+            <h2 class="section-title">
+                <i class="bi bi-bag"></i>
+                Mis pedidos
+            </h2>
+            
+            <div class="empty-state" th:if="${pedidos == null or pedidos.empty}">
+                <i class="bi bi-bag-x"></i>
+                <p>Aún no tienes pedidos</p>
+                <a href="/" class="btn btn-primary" style="margin-top: 15px;">
+                    <i class="bi bi-shop"></i>
+                    Ir a la tienda
+                </a>
+            </div>
+            
+            <!-- Aquí irán los pedidos cuando los tengamos -->
+        </div>
+
+        <!-- SECCIÓN: LISTA DE DESEOS -->
+        <div id="lista-deseos" class="content-section">
+            <h2 class="section-title">
+                <i class="bi bi-heart"></i>
+                Lista de deseos
+            </h2>
+            
+            <div class="empty-state" th:if="${deseos == null or deseos.empty}">
+                <i class="bi bi-heart"></i>
+                <p>Tu lista de deseos está vacía</p>
+                <a href="/" class="btn btn-primary" style="margin-top: 15px;">
+                    <i class="bi bi-shop"></i>
+                    Explorar productos
+                </a>
+            </div>
+            
+            <!-- Aquí irán los productos de la lista de deseos -->
+        </div>
+
+        <!-- SECCIÓN: HISTORIAL -->
+        <div id="historial" class="content-section">
+            <h2 class="section-title">
+                <i class="bi bi-clock-history"></i>
+                Historial de productos visitados
+            </h2>
+            
+            <div class="empty-state" th:if="${historial == null or historial.empty}">
+                <i class="bi bi-clock-history"></i>
+                <p>No has visitado productos aún</p>
+                <a href="/" class="btn btn-primary" style="margin-top: 15px;">
+                    <i class="bi bi-shop"></i>
+                    Ver productos
+                </a>
+            </div>
+
+            <div class="products-grid" th:if="${historial != null and !historial.empty}">
+                <div class="product-card-mini" th:each="producto : ${historial}">
+                    <img th:src="${producto.imagenUrl}" alt="Producto" 
+                         onerror="this.src='https://via.placeholder.com/200x150/f5f5f5/999? text=Producto'">
+                    <div class="product-info">
+                        <div class="product-name" th:text="${producto.nombre}">Producto</div>
+                        <div class="product-price">
+                            $ <span th:text="${#numbers.formatDecimal(producto.precio, 0, 'COMMA', 0, 'POINT')}">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<!-- MODAL: ELIMINAR CUENTA -->
+<div class="modal-overlay" id="modalEliminar">
+    <div class="modal">
+        <h3 class="modal-title danger">
+            <i class="bi bi-exclamation-triangle"></i>
+            ¿Eliminar tu cuenta?
+        </h3>
+        <p class="modal-text">
+            Esta acción desactivará tu cuenta. No podrás acceder a tu perfil, pedidos ni historial.  
+           
+        </p>
+        <div class="modal-actions">
+            <button class="btn btn-outline" onclick="cerrarModal()">Cancelar</button>
+            <form th:action="@{/mi-perfil/eliminar}" method="post" style="display: inline;">
+                <button type="submit" class="btn btn-danger">
+                    <i class="bi bi-trash"></i>
+                    Sí, eliminar
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: CAMBIAR FOTO -->
+<div class="modal-overlay" id="modalFoto">
+    <div class="modal">
+        <h3 class="modal-title">
+            <i class="bi bi-camera"></i>
+            Cambiar foto de perfil
+        </h3>
+        <form th:action="@{/mi-perfil/foto}" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label class="form-label">Selecciona una imagen en </label>
+                <input type="file" name="foto" class="form-control" accept="image/*" required>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-outline" onclick="cerrarModalFoto()">Cancelar</button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-upload"></i>
+                    Subir foto
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+(function(){
+    const verifyUrl = '/api/mi-perfil/verify-password';
+    const changeUrl = '/api/mi-perfil/cambiar-clave';
+
+    const claveActual = document.getElementById('claveActual');
+    const claveNueva = document.getElementById('claveNueva');
+    const claveConfirmar = document.getElementById('claveConfirmar');
+    const btnCambiar = document.getElementById('btnCambiarClave');
+    const mensajeDiv = document.getElementById('cambiar-clave-mensaje');
+
+    const reqs = {
+        length: document.getElementById('c-req-length'),
+        upper: document.getElementById('c-req-uppercase'),
+        lower: document.getElementById('c-req-lowercase'),
+        number: document.getElementById('c-req-number'),
+        special: document.getElementById('c-req-special')
+    };
+
+    let verifyTimer = null;
+    window.__currentPasswordVerified = false;
+
+    // helper: set field validation classes
+    function setValid(el, feedbackEl, message) {
+        if (el) { el.classList.remove('is-invalid'); el.classList.add('is-valid'); }
+        if (feedbackEl) { feedbackEl.textContent = message || ''; feedbackEl.classList.remove('show'); }
+    }
+    function setInvalid(el, feedbackEl, message) {
+        if (el) { el.classList.remove('is-valid'); el.classList.add('is-invalid'); }
+        if (feedbackEl) { feedbackEl.textContent = message || ''; feedbackEl.classList.add('show'); }
+    }
+
+    function actualizarRequisitos(value){
+        const checks = {
+            length: value.length >= 12,
+            upper: /[A-Z]/.test(value),
+            lower: /[a-z]/.test(value),
+            number: /[0-9]/.test(value),
+            special: /[!@#$%^&*(),.?":{}|<>_\-\[\]\\\/~`+=;:]/.test(value)
+        };
+        for (const k in checks) {
+            const el = reqs[k];
+            if (!el) continue;
+            el.className = checks[k] ? 'requirement valid' : 'requirement invalid';
+            const icon = el.querySelector('.requirement-icon');
+            if (icon) icon.textContent = checks[k] ? '✅' : '❌';
+        }
+    }
+
+    function validarCoincidencia(){
+        const err = document.getElementById('claveConfirmar-error');
+        if (!claveConfirmar || !err) return false;
+        if (!claveConfirmar.value) {
+            err.textContent = '';
+            err.classList.remove('show');
+            claveConfirmar.classList.remove('is-invalid','is-valid');
+            return false;
+        }
+        if (claveNueva.value !== claveConfirmar.value) {
+            err.textContent = 'Las contraseñas no coinciden';
+            err.classList.add('show');
+            claveConfirmar.classList.add('is-invalid');
+            claveConfirmar.classList.remove('is-valid');
+            return false;
+        } else {
+            err.textContent = '';
+            err.classList.remove('show');
+            claveConfirmar.classList.remove('is-invalid');
+            claveConfirmar.classList.add('is-valid');
+            return true;
+        }
+    }
+
+    function validarNuevaPasswordLocal(){
+        const v = claveNueva ? claveNueva.value : '';
+        actualizarRequisitos(v);
+        const ok = v.length >= 12 && /[A-Z]/.test(v) && /[a-z]/.test(v) && /[0-9]/.test(v) && /[!@#$%^&*(),.?":{}|<>_\-\[\]\\\/~`+=;:]/.test(v);
+        const err = document.getElementById('claveNueva-error');
+        if (!err) return ok;
+        if (!ok) {
+            err.textContent = 'La contraseña no cumple los requisitos.';
+            err.classList.add('show');
+            if (claveNueva) { claveNueva.classList.add('is-invalid'); claveNueva.classList.remove('is-valid'); }
+            return false;
+        } else {
+            err.textContent = '';
+            err.classList.remove('show');
+            if (claveNueva) { claveNueva.classList.remove('is-invalid'); claveNueva.classList.add('is-valid'); }
+            return true;
+        }
+    }
+
+    function actualizarEstadoBoton(){
+        const okNew = validarNuevaPasswordLocal();
+        const okMatch = validarCoincidencia();
+        const okCurrent = !!window.__currentPasswordVerified;
+        if (btnCambiar) btnCambiar.disabled = !(okCurrent && okNew && okMatch);
+    }
+
+    // Verify current password (with logging to help debug)
+    if (claveActual) {
+        claveActual.addEventListener('input', function(){
+            // reset flag until server confirms
+            window.__currentPasswordVerified = false;
+            actualizarEstadoBoton();
+
+            if (verifyTimer) clearTimeout(verifyTimer);
+            verifyTimer = setTimeout(async () => {
+                const value = claveActual.value.trim();
+                const err = document.getElementById('claveActual-error');
+
+                if (!value) {
+                    if (err) { err.textContent = ''; err.classList.remove('show'); }
+                    claveActual.classList.remove('is-valid','is-invalid');
+                    window.__currentPasswordVerified = false;
+                    actualizarEstadoBoton();
+                    return;
+                }
+
+                try {
+                    console.debug('Verificando contraseña actual...', value ? '***' : '(vacía)');
+                    const res = await fetch(verifyUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ currentPassword: value })
+                    });
+
+                    const data = await res.json();
+                    console.debug('Respuesta verify-password:', res.status, data);
+
+                    if (res.ok && data.valid) {
+                        setValid(claveActual, err, '✔️ Contraseña actual verificada');
+                        window.__currentPasswordVerified = true;
+                    } else {
+                        setInvalid(claveActual, err, data.message || '❌ Contraseña actual incorrecta');
+                        window.__currentPasswordVerified = false;
+                    }
+                } catch (e) {
+                    console.error('Error al verificar contraseña actual', e);
+                    setInvalid(claveActual, err, '⚠️ Error al verificar contraseña');
+                    window.__currentPasswordVerified = false;
+                } finally {
+                    actualizarEstadoBoton();
+                }
+            }, 420);
+        });
+    }
+
+    // other listeners
+    if (claveNueva) claveNueva.addEventListener('input', function(){ validarNuevaPasswordLocal(); validarCoincidencia(); actualizarEstadoBoton(); });
+    if (claveConfirmar) claveConfirmar.addEventListener('input', function(){ validarCoincidencia(); actualizarEstadoBoton(); });
+
+    // submit handler
+    const form = document.getElementById('formCambiarClave');
+    if (form) {
+        form.addEventListener('submit', async function(e){
+            e.preventDefault();
+            if (!window.__currentPasswordVerified) {
+                alert('La contraseña actual no está verificada.');
+                return;
+            }
+            if (!validarNuevaPasswordLocal() || !validarCoincidencia()) {
+                alert('Corrige los errores antes de enviar.');
+                return;
+            }
+            if (btnCambiar) { btnCambiar.disabled = true; btnCambiar.textContent = '⏳ Guardando...'; }
+            if (mensajeDiv) { mensajeDiv.style.display = 'none'; }
+
+            try {
+                const res = await fetch(changeUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        currentPassword: claveActual.value,
+                        newPassword: claveNueva.value
+                    })
+                });
+                const data = await res.json();
+                console.debug('Respuesta cambiar-clave:', res.status, data);
+                if (res.ok && data.success) {
+                    if (mensajeDiv) { mensajeDiv.style.display = 'block'; mensajeDiv.style.color = '#28a745'; mensajeDiv.textContent = '✅ Contraseña actualizada correctamente. Hemos enviado un correo de confirmación.'; }
+                    // limpia campos
+                    claveActual.value = claveNueva.value = claveConfirmar.value = '';
+                    window.__currentPasswordVerified = false;
+                    actualizarRequisitos('');
+                    actualizarEstadoBoton();
+                } else {
+                    if (mensajeDiv) { mensajeDiv.style.display = 'block'; mensajeDiv.style.color = '#dc3545'; mensajeDiv.textContent = data.message || 'Error al actualizar la contraseña.'; }
+                }
+            } catch (err) {
+                if (mensajeDiv) { mensajeDiv.style.display = 'block'; mensajeDiv.style.color = '#dc3545'; mensajeDiv.textContent = 'Error de conexión. Intenta nuevamente.'; }
+            } finally {
+                if (btnCambiar) { btnCambiar.disabled = false; btnCambiar.textContent = 'Cambiar contraseña'; }
+            }
+        });
+    }
+
+    // init
+    window.__currentPasswordVerified = false;
+    actualizarRequisitos('');
+    actualizarEstadoBoton();
+})();
+
+/* ---------- ADICIONES: validación editar perfil, teléfono Colombia, subida foto temporal,
+     modal eliminar cuenta, y flow de cambio de contraseña por código si lo quiere adaptar ----------
+   He dejado el script original de verificación por contraseña (verifyUrl) y cambio (changeUrl)
+   arriba (para compatibilidad). Si prefieres el flujo por código (like "olvidaste contraseña")
+   puedo reemplazar la verificación actual por ese flujo — dime y lo integro.
+*/
+
+/* ---------- VALIDACIÓN EDITAR PERFIL (basada en registro) ---------- */
+(function() {
+    const nombreInput = document.getElementById('nombreInput');
+    const emailInput = document.getElementById('emailInput');
+    const fechaInput = document.getElementById('fechaNacimientoInput');
+    const telefonoInput = document.getElementById('telefonoInput');
+    const telefonoContainer = document.getElementById('telefonoContainer');
+    const telefonoFeedback = document.getElementById('telefonoFeedback');
+    const btnGuardar = document.getElementById('btnGuardarPerfil');
+
+    let camposModificados = { nombre:false, email:false, fecha:false, telefono:false };
+    let formularioEnviado = false;
+
+    const extensionesValidas = ['com','org','net','edu','gob','gov','mil','int','info','biz','name','pro','co','io','ai','me','tv','us','uk','ca','au','de','fr','es','it','jp','cn','in','br','mx','ar','cl','pe','ec','uy','py','bo','ve','cr','pa','do','gt','sv','hn','ni','pr'];
+
+    function validarNombre() {
+        const value = nombreInput.value.trim();
+        const err = document.getElementById('nombre-error');
+        if (!camposModificados.nombre && !formularioEnviado) {
+            limpiarError(nombreInput, err);
+            return value !== '';
+        }
+        if (!value) { mostrarError(nombreInput, err, 'El nombre no puede estar vacío'); return false; }
+        if (value.length < 3) { mostrarError(nombreInput, err, 'Mínimo 3 caracteres'); return false; }
+        if (value.length > 60) { mostrarError(nombreInput, err, 'Máximo 60 caracteres'); return false; }
+        if (!/^[a-zA-ZÁÉÍÓÚáéíóúÑñ\s']+$/.test(value)) { mostrarError(nombreInput, err, 'Solo letras, espacios y apóstrofes'); return false; }
+        mostrarExito(nombreInput, err); return true;
+    }
+
+    function validarEmail() {
+        const value = emailInput.value.trim();
+        const err = document.getElementById('email-error');
+        if (!camposModificados.email && !formularioEnviado) {
+            limpiarError(emailInput, err);
+            return value !== '';
+        }
+        if (!value) { mostrarError(emailInput, err, 'El correo no puede estar vacío'); return false; }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) { mostrarError(emailInput, err, 'Correo inválido'); return false; }
+        const partes = value.split('@');
+        if (partes.length !== 2) { mostrarError(emailInput, err, 'Correo inválido'); return false; }
+        const dominio = partes[1];
+        const partesDominio = dominio.split('.');
+        const ext = partesDominio[partesDominio.length - 1];
+        if (!extensionesValidas.includes(ext.toLowerCase())) { mostrarError(emailInput, err, 'Dominio no válido'); return false; }
+        mostrarExito(emailInput, err); return true;
+    }
+
+    function validarFecha() {
+        const value = fechaInput.value;
+        const err = document.getElementById('fecha-error');
+        if (!camposModificados.fecha && !formularioEnviado) {
+            limpiarError(fechaInput, err);
+            return value !== '';
+        }
+        if (!value) { mostrarError(fechaInput, err, 'La fecha es obligatoria'); return false; }
+        const fechaNac = new Date(value);
+        const hoy = new Date();
+        const min16 = new Date(); min16.setFullYear(hoy.getFullYear() - 16);
+        const max75 = new Date(); max75.setFullYear(hoy.getFullYear() - 75);
+        if (fechaNac > min16) { mostrarError(fechaInput, err, 'Debes tener al menos 16 años'); return false; }
+        if (fechaNac < max75) { mostrarError(fechaInput, err, 'Edad máxima 75 años'); return false; }
+        mostrarExito(fechaInput, err); return true;
+    }
+
+    function validarTelefono() {
+        const value = (telefonoInput.value || '').replace(/\D/g,'');
+        const fb = telefonoFeedback;
+        telefonoInput.value = value; // mantiene sólo números
+        if (!camposModificados.telefono && !formularioEnviado) {
+            telefonoContainer.classList.remove('is-invalid','is-valid');
+            fb.textContent = '';
+            return true;
+        }
+        if (!value) {
+            telefonoContainer.classList.remove('is-invalid'); telefonoContainer.classList.remove('is-valid');
+            fb.textContent = '';
+            return true; // teléfono opcional, pero si se escribe validar
+        }
+        // Colombia: 10 dígitos (sin prefijo +57).
+        if (!/^[0-9]{10}$/.test(value)) {
+            telefonoContainer.classList.add('is-invalid'); telefonoContainer.classList.remove('is-valid');
+            fb.textContent = 'El teléfono debe tener 10 dígitos (ej: 3001234567)';
+            return false;
+        }
+        telefonoContainer.classList.remove('is-invalid'); telefonoContainer.classList.add('is-valid');
+        fb.textContent = 'Formato válido';
+        fb.classList.add('valid');
+        return true;
+    }
+
+    function mostrarError(input, errorElement, mensaje) {
+        input.classList.remove('is-valid'); input.classList.add('is-invalid');
+        if (errorElement) { errorElement.textContent = mensaje; errorElement.classList.add('show'); }
+    }
+    function mostrarExito(input, errorElement) {
+        input.classList.remove('is-invalid'); input.classList.add('is-valid');
+        if (errorElement) { errorElement.textContent = ''; errorElement.classList.remove('show'); }
+    }
+    function limpiarError(input, errorElement) {
+        input.classList.remove('is-invalid','is-valid');
+        if (errorElement) { errorElement.textContent = ''; errorElement.classList.remove('show'); }
+    }
+
+    function validarFormulario() {
+        const v1 = validarNombre();
+        const v2 = validarEmail();
+        const v3 = validarFecha();
+        const v4 = validarTelefono();
+        if (btnGuardar) btnGuardar.disabled = !(v1 && v2 && v3 && v4);
+        return v1 && v2 && v3 && v4;
+    }
+
+    // listeners
+    if (nombreInput) nombreInput.addEventListener('input', ()=>{ camposModificados.nombre=true; validarFormulario(); });
+    if (emailInput) emailInput.addEventListener('input', ()=>{ camposModificados.email=true; validarFormulario(); });
+    if (fechaInput) fechaInput.addEventListener('change', ()=>{ camposModificados.fecha=true; validarFormulario(); });
+    if (telefonoInput) telefonoInput.addEventListener('input', ()=>{ camposModificados.telefono=true; validarFormulario(); });
+
+    // prevenir envío si inválido
+    const formEditar = document.getElementById('formEditarPerfil');
+    if (formEditar) {
+        formEditar.addEventListener('submit', function(e){
+            formularioEnviado = true;
+            if (!validarFormulario()) {
+                e.preventDefault();
+                return;
+            }
+            // si pasa, deja que el formulario haga submit al backend (controlador)
+        });
+    }
+
+    // validación inicial
+    validarFormulario();
+})();
+
+/* ---------- MODALES (foto + eliminar) y subida foto temporal ---------- */
+function abrirCambiarFoto() {
+    const modal = document.getElementById('modalFoto');
+    if (!modal) return;
+    modal.classList.add('show');
+}
+function cerrarModalFoto() {
+    const modal = document.getElementById('modalFoto'); if (!modal) return;
+    modal.classList.remove('show');
+}
+document.addEventListener('click', function(e){
+    const modal = document.getElementById('modalFoto');
+    if (!modal) return;
+    if (modal.classList.contains('show') && e.target === modal) cerrarModalFoto();
+});
+
+// El formulario en template original hace un POST al servidor al enviar.
+// Si quieres una subida por fetch y preview temporal, avisa y lo implemento.
+
+/* El modalEliminar del template original ya envía el form que apunta a /mi-perfil/eliminar.
+   Si prefieres manejarlo por fetch para enviar correo y mostrar confirmación sin recargar,
+   puedo implementarlo. */
+
+(function(){
+    // Menu navigation (mantener comportamiento)
+    const menuLinks = document.querySelectorAll('.sidebar .menu-link[data-section]');
+    const sections = document.querySelectorAll('.content-section');
+    menuLinks.forEach(link=>{
+        link.addEventListener('click', function(e){
+            e.preventDefault();
+            const sec = link.getAttribute('data-section');
+            sections.forEach(s=>s.classList.remove('active'));
+            const target = document.getElementById(sec);
+            if (target) target.classList.add('active');
+            menuLinks.forEach(l=>l.classList.remove('active'));
+            link.classList.add('active');
+            window.scrollTo({top:0,behavior:'smooth'});
+        });
+    });
+})();
+
+</script>
+<script src="/js/menu-navigation.js"></script>
+</body>
+</html>

@@ -6,76 +6,104 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.5.7</version>
-        <relativePath /><!-- lookup parent from repository -->
+        <relativePath/> <!-- lookup parent from repository -->
     </parent>
+
     <groupId>io.bootify</groupId>
     <artifactId>AgendaGym</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>AgendaGym</name>
 
     <properties>
-        <java.version>21</java.version>
+        <!-- Ajustado a JDK 24 que usas en tu máquina -->
+        <java.version>24</java.version>
     </properties>
 
     <dependencies>
+        <!-- Web / MVC -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+
+        <!-- Validación -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
+
+        <!-- Crypto para PasswordEncoder -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-crypto</artifactId>
+        </dependency>
+
+        <!-- JPA -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
+
+        <!-- Mail (una sola vez) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+
+        <!-- PostgreSQL runtime -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
+
+        <!-- Error handling starter -->
         <dependency>
             <groupId>io.github.wimdeblauwe</groupId>
             <artifactId>error-handling-spring-boot-starter</artifactId>
             <version>4.6.0</version>
         </dependency>
+
+        <!-- OpenAPI / Swagger UI -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>2.8.13</version>
         </dependency>
+
+        <!-- Devtools (runtime) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
             <optional>true</optional>
         </dependency>
+
+        <!-- BCrypt (opcional si lo usas directamente) -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-mail</artifactId>
+            <groupId>org.mindrot</groupId>
+            <artifactId>jbcrypt</artifactId>
+            <version>0.4</version>
         </dependency>
 
-<dependency>
-    <groupId>org.mindrot</groupId>
-    <artifactId>jbcrypt</artifactId>
-    <version>0.4</version>
-</dependency>
+        <!-- Thymeleaf -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
 
+        <!-- Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
 
     </dependencies>
 
     <build>
         <plugins>
+            <!-- Spring Boot plugin -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -83,6 +111,18 @@
                     <profiles>
                         <profile>local</profile>
                     </profiles>
+                </configuration>
+            </plugin>
+
+            <!-- Compiler plugin: usa la propiedad java.version -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <release>${java.version}</release>
                 </configuration>
             </plugin>
         </plugins>

@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>GymTrack - Crear Tu Agenda</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%);
+            overflow: hidden;
+        }
+
+        .wrap {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .card { 
+            background: white; 
+            border-radius: 24px; 
+            display: flex; 
+            overflow: hidden; 
+            width: 95%;
+            max-width: 950px;
+            max-height: 92vh;
+            box-shadow: 0 8px 32px rgba(255, 152, 0, 0.15), 0 4px 16px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .card-left { 
+            padding: 40px 45px;
+            width: 50%; 
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow-y: auto;
+        }
+
+        .card-right { 
+            padding: 40px 35px;
+            width: 50%; 
+            box-sizing: border-box;
+            background: linear-gradient(135deg, #ff9800 0%, #ffb74d 100%);
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .circle-container {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            margin: 0 auto 25px;
+        }
+
+        .circle-background {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.1) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            border: 3px solid rgba(255,255,255,0.4);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .circle-icon {
+            font-size: 70px;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+        }
+
+        .circle-text {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            animation: rotate 15s linear infinite;
+        }
+
+        .circle-text span {
+            position: absolute;
+            left: 50%;
+            top: -12px;
+            transform-origin: 0 102px;
+            font-weight: 700;
+            font-size: 16px;
+            color: white;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        h2 { 
+            color: #2d3748; 
+            margin-bottom: 20px;
+            margin-top: 20px;
+            font-size: 26px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .card-right h2 {
+            color: white;
+            font-size: 28px;
+            margin-bottom: 15px;
+            margin-top: 0;
+        }
+
+        .card-right p {
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 8px;
+            opacity: 0.95;
+            max-width: 280px;
+        }
+
+        input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="date"] { 
+    width: 100%; 
+    padding: 14px 18px;
+    margin-bottom: 4px; 
+    border-radius: 12px; 
+    border: 2px solid #e2e8f0; 
+    font-size: 15px;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+}
+
+      input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="date"]:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    outline: none;
+}
+
+        .password-container { 
+            position: relative; 
+        }
+
+        .password-container input { 
+            padding-right: 50px; 
+        }
+
+        .toggle-password-btn { 
+            position: absolute; 
+            right: 12px; 
+            top: 50%; 
+            transform: translateY(-50%); 
+            cursor: pointer; 
+            font-size: 1.2em; 
+            background: none; 
+            border: none; 
+            color: #666; 
+            padding: 5px;
+            border-radius: 5px;
+            transition: color 0.3s ease;
+        }
+
+        .toggle-password-btn:hover {
+            color: #ff9800;
+            background: rgba(255, 152, 0, 0.1);
+        }
+
+        .btn { 
+            background: linear-gradient(135deg, #ff9800 0%, #ffb74d 100%);
+            color: white; 
+            padding: 14px 30px;
+            border-radius: 12px; 
+            font-weight: 600; 
+            border: none; 
+            cursor: pointer;
+            font-size: 15px;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+            margin-top: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 152, 0, 0.4);
+        }
+
+        .btn:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .invalid-feedback { 
+            color: #e53e3e; 
+            font-size: 12px;
+            margin-top: -2px; 
+            margin-bottom: 10px; 
+            text-align: left; 
+            display: block;
+            min-height: 16px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .invalid-feedback.show {
+            opacity: 1;
+        }
+
+        input.is-valid { 
+            border-color: #38a169; 
+        }
+
+        input.is-invalid { 
+            border-color: #e53e3e; 
+            box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.1);
+        }
+
+        .server-message { 
+            padding: 12px;
+            border-radius: 12px; 
+            margin-bottom: 18px; 
+            text-align: center;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .server-error { 
+            background: #fed7d7; 
+            color: #c53030; 
+            border: 2px solid #feb2b2; 
+        }
+
+        .server-success { 
+            background: #c6f6d5; 
+            color: #276749; 
+            border: 2px solid #9ae6b4; 
+        }
+
+        .link { 
+            font-size: 14px;
+            color: #ff9800; 
+            cursor: pointer; 
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            margin: 6px 0;
+            display: block;
+            text-align: center;
+        }
+
+        .link:hover {
+            color: #f57c00;
+            text-decoration: underline;
+        }
+
+        .field-group {
+            margin-bottom: 2px;
+        }
+
+        .password-requirements {
+            font-size: 11px;
+            color: #6b7280;
+            margin-top: 4px;
+            margin-bottom: 12px;
+            opacity: 0;
+            transition: opacity 0. 3s ease;
+        }
+
+        .password-requirements.show {
+            opacity: 1;
+        }
+
+        .requirement {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2px;
+        }
+
+        .requirement.valid {
+            color: #38a169;
+        }
+
+        .requirement.invalid {
+            color: #6b7280;
+        }
+
+        .requirement-icon {
+            margin-right: 5px;
+            font-size: 0.9em;
+        }
+
+        /* Estilos para código de verificación */
+        .codigo-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .codigo-input {
+            width: 50px ! important;
+            height: 60px;
+            text-align: center;
+            font-size: 24px ! important;
+            font-weight: bold;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .codigo-input:focus {
+            border-color: #ff9800;
+            box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.2);
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 25px;
+            gap: 10px;
+        }
+
+        .step {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            color: #718096;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .step.active {
+            background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%);
+            color: white;
+        }
+
+        .step.completed {
+            background: #38a169;
+            color: white;
+        }
+
+        .step-line {
+            width: 40px;
+            height: 3px;
+            background: #e2e8f0;
+            align-self: center;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .step-line.active {
+            background: #38a169;
+        }
+
+        .timer {
+            text-align: center;
+            color: #718096;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .timer.warning {
+            color: #e53e3e;
+        }
+
+        .resend-link {
+            color: #ff9800;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .resend-link:hover {
+            color: #f57c00;
+        }
+
+        .hidden {
+            display: none ! important;
+        }
+
+        .back-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #333;
+            text-decoration: none;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+            z-index: 10;
+            background: white;
+            padding: 10px 18px;
+            border-radius: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .back-link:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(-1px);
+            color: #ff9800;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .floating-elements {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            top: 0;
+            left: 0;
+        }
+
+        .floating-element {
+            position: absolute;
+            font-size: 22px;
+            opacity: 0. 2;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .floating-element:nth-child(1) { top: 8%; left: 10%; animation-delay: 0s; }
+        .floating-element:nth-child(2) { top: 18%; right: 12%; animation-delay: 1s; }
+        .floating-element:nth-child(3) { bottom: 18%; left: 15%; animation-delay: 2s; }
+        .floating-element:nth-child(4) { bottom: 10%; right: 8%; animation-delay: 3s; }
+
+        @media (max-width: 768px) {
+            .card {
+                flex-direction: column;
+                max-height: none;
+                overflow-y: auto;
+            }
+            .card-left, .card-right {
+                width: 100%;
+            }
+            .card-right {
+                display: none;
+            }
+            html, body {
+                overflow: auto;
+            }
+            .wrap {
+                height: auto;
+                min-height: 100vh;
+            }
+            .codigo-input {
+                width: 45px !important;
+                height: 55px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<a href="/" class="back-link">← Volver a la tienda</a>
+
+<div class="wrap">
+    <!-- REGISTRO AGENDA -->
+    <div class="card" id="registro-section">
+        <div class="card-left">
+            <h2>📅 Crea Tu Agenda</h2>
+
+            <div th:if="${error != null and error != ''}" class="server-message server-error" th:text="${error}"></div>
+            <div th:if="${exito != null and exito != ''}" class="server-message server-success" th:text="${exito}"></div>
+
+            <form id="register-form" th:action="@{/registro-agenda}" method="post">
+                <div class="field-group">
+                    <input type="text" name="nombre" id="register-nombre" placeholder="👤 Nombre de usuario" required>
+                    <div class="invalid-feedback" id="nombre-error"></div>
+                </div>
+
+                <div class="field-group">
+                    <input type="email" name="email" id="register-email" placeholder="📧 Correo electrónico gmail" required>
+                    <div class="invalid-feedback" id="email-error"></div>
+                </div>
+
+                <div class="field-group">
+                    <div class="password-container">
+                        <input type="password" name="password" id="register-password" placeholder="🔒 Contraseña" required autocomplete="new-password">
+                        <button type="button" class="toggle-password-btn" aria-label="Mostrar u ocultar contraseña">👁️</button>
+                    </div>
+                    <div class="password-requirements" id="password-requirements">
+                        <div class="requirement invalid" id="req-length">
+                            <span class="requirement-icon">❌</span> Mínimo 12 caracteres
+                        </div>
+                        <div class="requirement invalid" id="req-uppercase">
+                            <span class="requirement-icon">❌</span> Al menos una mayúscula
+                        </div>
+                        <div class="requirement invalid" id="req-lowercase">
+                            <span class="requirement-icon">❌</span> Al menos una minúscula
+                        </div>
+                        <div class="requirement invalid" id="req-number">
+                            <span class="requirement-icon">❌</span> Al menos un número
+                        </div>
+                        <div class="requirement invalid" id="req-special">
+                            <span class="requirement-icon">❌</span> Al menos un símbolo (! @#$%^&*)
+                        </div>
+                    </div>
+                    <div class="invalid-feedback" id="password-error"></div>
+                </div>
+
+                <div class="field-group">
+                    <input type="date" name="fechaNacimiento" id="register-fechaNacimiento" required>
+                    <div class="invalid-feedback" id="fecha-error"></div>
+                </div>
+
+                <button type="submit" class="btn" id="submit-btn">📅 Crear Mi Agenda</button>
+            </form>
+
+            <a href="/registro" class="link">¿Solo quieres comprar? Ir al registro normal</a>
+            <p class="link" onclick="mostrarRecuperar()">¿Olvidaste tu contraseña? </p>
+        </div>
+
+        <div class="card-right">
+            <div class="circle-container">
+                <div class="circle-background">
+                    <div class="circle-icon">📅</div>
+                </div>
+                <div class="circle-text">
+                    <span style="transform: rotate(0deg)">💪</span>
+                    <span style="transform: rotate(45deg)">📊</span>
+                    <span style="transform: rotate(90deg)">🎯</span>
+                    <span style="transform: rotate(135deg)">🏋️</span>
+                    <span style="transform: rotate(180deg)">📈</span>
+                    <span style="transform: rotate(225deg)">🔥</span>
+                    <span style="transform: rotate(270deg)">⭐</span>
+                    <span style="transform: rotate(315deg)">🚀</span>
+                </div>
+            </div>
+            
+            <h2>¡Tu Agenda Personalizada!</h2>
+            <p>Crea rutinas a tu medida, registra tu progreso y alcanza tus metas fitness.</p>
+            <p>Tu entrenador virtual te espera. </p>
+            
+            <div class="floating-elements">
+                <div class="floating-element">📅</div>
+                <div class="floating-element">💪</div>
+                <div class="floating-element">📊</div>
+                <div class="floating-element">🎯</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RECUPERAR CONTRASEÑA -->
+    <div class="card" id="recuperar-section" style="display:none;">
+        <div class="card-left">
+            <!-- Indicador de pasos -->
+            <div class="step-indicator">
+                <div class="step active" id="step1">1</div>
+                <div class="step-line" id="line1"></div>
+                <div class="step" id="step2">2</div>
+                <div class="step-line" id="line2"></div>
+                <div class="step" id="step3">3</div>
+            </div>
+
+            <!-- PASO 1: Ingresar correo -->
+            <div id="recuperar-paso1">
+                <h2>Recuperar Acceso</h2>
+                <p style="text-align: center; color: #718096; margin-bottom: 20px;">
+                    Ingresa tu correo y te enviaremos un código de verificación. 
+                </p>
+                
+                <div class="field-group">
+                    <input type="email" id="recuperar-email" placeholder="📧 Correo electrónico gmail" required>
+                    <div class="invalid-feedback" id="recuperar-email-error"></div>
+                </div>
+                
+                <button type="button" class="btn" id="btn-enviar-codigo" onclick="enviarCodigo()">
+                    📧 Enviar Código
+                </button>
+                
+                <p class="link" onclick="mostrarRegistro()">← Volver al registro</p>
+            </div>
+
+            <!-- PASO 2: Ingresar código -->
+            <div id="recuperar-paso2" class="hidden">
+                <h2>Verificar Código</h2>
+                <p style="text-align: center; color: #718096; margin-bottom: 10px;">
+                    Ingresa el código de 6 dígitos que enviamos a:
+                </p>
+                <p style="text-align: center; color: #ff9800; font-weight: 600; margin-bottom: 20px;" id="email-mostrado"></p>
+                
+                <div class="codigo-container">
+                    <input type="text" class="codigo-input" maxlength="1" id="codigo1" oninput="moverSiguiente(1)" onkeydown="moverAnterior(event, 1)">
+                    <input type="text" class="codigo-input" maxlength="1" id="codigo2" oninput="moverSiguiente(2)" onkeydown="moverAnterior(event, 2)">
+                    <input type="text" class="codigo-input" maxlength="1" id="codigo3" oninput="moverSiguiente(3)" onkeydown="moverAnterior(event, 3)">
+                    <input type="text" class="codigo-input" maxlength="1" id="codigo4" oninput="moverSiguiente(4)" onkeydown="moverAnterior(event, 4)">
+                    <input type="text" class="codigo-input" maxlength="1" id="codigo5" oninput="moverSiguiente(5)" onkeydown="moverAnterior(event, 5)">
+                    <input type="text" class="codigo-input" maxlength="1" id="codigo6" oninput="moverSiguiente(6)" onkeydown="moverAnterior(event, 6)">
+                </div>
+                
+                <div class="invalid-feedback show" id="codigo-error" style="text-align: center;"></div>
+                
+                <div class="timer" id="timer-container">
+                    El código expira en: <span id="timer">15:00</span>
+                </div>
+                
+                <button type="button" class="btn" id="btn-verificar-codigo" onclick="verificarCodigo()">
+                    ✅ Verificar Código
+                </button>
+                
+                <p style="text-align: center; margin-top: 15px; color: #718096; font-size: 14px;">
+                    ¿No recibiste el código? <span class="resend-link" id="resend-link" onclick="reenviarCodigo()">Reenviar</span>
+                </p>
+                
+                <p class="link" onclick="volverPaso1()">← Cambiar correo</p>
+            </div>
+
+            <!-- PASO 3: Nueva contraseña -->
+            <div id="recuperar-paso3" class="hidden">
+                <h2>Nueva Contraseña</h2>
+                <p style="text-align: center; color: #718096; margin-bottom: 20px;">
+                    Crea tu nueva contraseña segura.
+                </p>
+                
+                <div class="field-group">
+                    <div class="password-container">
+                        <input type="password" id="nueva-password" placeholder="🔒 Nueva contraseña" required>
+                        <button type="button" class="toggle-password-btn" onclick="togglePassword('nueva-password', this)">👁️</button>
+                    </div>
+                    <div class="password-requirements show" id="nueva-password-requirements">
+                        <div class="requirement invalid" id="nuevo-req-length">
+                            <span class="requirement-icon">❌</span> Mínimo 12 caracteres
+                        </div>
+                        <div class="requirement invalid" id="nuevo-req-uppercase">
+                            <span class="requirement-icon">❌</span> Al menos una mayúscula
+                        </div>
+                        <div class="requirement invalid" id="nuevo-req-lowercase">
+                            <span class="requirement-icon">❌</span> Al menos una minúscula
+                        </div>
+                        <div class="requirement invalid" id="nuevo-req-number">
+                            <span class="requirement-icon">❌</span> Al menos un número
+                        </div>
+                        <div class="requirement invalid" id="nuevo-req-special">
+                            <span class="requirement-icon">❌</span> Al menos un símbolo (!@#$%^&*)
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="field-group">
+                    <div class="password-container">
+                        <input type="password" id="confirmar-password" placeholder="🔒 Confirmar contraseña" required>
+                        <button type="button" class="toggle-password-btn" onclick="togglePassword('confirmar-password', this)">👁️</button>
+                    </div>
+                    <div class="invalid-feedback" id="confirmar-error"></div>
+                </div>
+                
+                <button type="button" class="btn" id="btn-cambiar-password" onclick="cambiarPassword()">
+                    🔐 Cambiar Contraseña
+                </button>
+            </div>
+        </div>
+        
+        <div class="card-right">
+            <div class="circle-container">
+                <div class="circle-background">
+                    <div class="circle-icon">🔑</div>
+                </div>
+                <div class="circle-text">
+                    <span style="transform: rotate(0deg)">🔓</span>
+                    <span style="transform: rotate(72deg)">🔄</span>
+                    <span style="transform: rotate(144deg)">✨</span>
+                    <span style="transform: rotate(216deg)">🎉</span>
+                    <span style="transform: rotate(288deg)">🚀</span>
+                </div>
+            </div>
+            <h2>¡Todo Tiene Solución!</h2>
+            <p>Recupera tu acceso en segundos y vuelve a enfocarte en lo que importa: tu progreso.</p>
+            
+            <div class="floating-elements">
+                <div class="floating-element">🔓</div>
+                <div class="floating-element">✨</div>
+                <div class="floating-element">🎉</div>
+                <div class="floating-element">🔄</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Variables globales para recuperación
+    let emailRecuperacion = '';
+    let codigoIngresado = '';
+    let timerInterval = null;
+    let tiempoRestante = 900;
+
+    // ========== FUNCIONES DE RECUPERACIÓN ==========
+
+    async function enviarCodigo() {
+        const emailInput = document.getElementById('recuperar-email');
+        const email = emailInput.value.trim();
+        const errorDiv = document.getElementById('recuperar-email-error');
+        const btn = document.getElementById('btn-enviar-codigo');
+        
+        if (!email) {
+            errorDiv.textContent = 'El correo es obligatorio';
+            errorDiv.classList.add('show');
+            emailInput.classList.add('is-invalid');
+            return;
+        }
+        
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            errorDiv.textContent = 'Correo inválido';
+            errorDiv.classList.add('show');
+            emailInput.classList.add('is-invalid');
+            return;
+        }
+        
+        errorDiv.textContent = '';
+        errorDiv. classList.remove('show');
+        emailInput.classList.remove('is-invalid');
+        
+        btn.disabled = true;
+        btn.textContent = '⏳ Enviando...';
+        
+        try {
+            const response = await fetch('/recuperar/enviar-codigo', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email })
+            });
+            
+            const data = await response.json();
+            
+            if (data. success) {
+                emailRecuperacion = email;
+                mostrarPaso2();
+            } else {
+                errorDiv. textContent = data.message || 'Error al enviar el código';
+                errorDiv.classList.add('show');
+            }
+        } catch (error) {
+            errorDiv.textContent = 'Error de conexión.  Intenta de nuevo. ';
+            errorDiv.classList. add('show');
+        }
+        
+        btn.disabled = false;
+        btn.textContent = '📧 Enviar Código';
+    }
+
+    function mostrarPaso2() {
+        document.getElementById('recuperar-paso1').classList.add('hidden');
+        document.getElementById('recuperar-paso2').classList.remove('hidden');
+        document.getElementById('email-mostrado').textContent = emailRecuperacion;
+        
+        document.getElementById('step1').classList.remove('active');
+        document.getElementById('step1').classList.add('completed');
+        document.getElementById('line1').classList.add('active');
+        document.getElementById('step2').classList.add('active');
+        
+        tiempoRestante = 900;
+        iniciarTimer();
+        
+        document.getElementById('codigo1').focus();
+    }
+
+    function moverSiguiente(num) {
+        const input = document.getElementById('codigo' + num);
+        const value = input.value;
+        
+        input.value = value.replace(/[^0-9]/g, '');
+        
+        if (input.value && num < 6) {
+            document.getElementById('codigo' + (num + 1)).focus();
+        }
+        
+        verificarCodigoCompleto();
+    }
+
+    function moverAnterior(event, num) {
+        if (event.key === 'Backspace' && ! event.target.value && num > 1) {
+            document.getElementById('codigo' + (num - 1)).focus();
+        }
+    }
+
+    function verificarCodigoCompleto() {
+        let codigo = '';
+        for (let i = 1; i <= 6; i++) {
+            codigo += document. getElementById('codigo' + i).value;
+        }
+        codigoIngresado = codigo;
+        
+        const btn = document.getElementById('btn-verificar-codigo');
+        btn. disabled = codigo.length !== 6;
+    }
+
+    async function verificarCodigo() {
+        const errorDiv = document.getElementById('codigo-error');
+        const btn = document.getElementById('btn-verificar-codigo');
+        
+        if (codigoIngresado.length !== 6) {
+            errorDiv.textContent = 'Ingresa el código completo';
+            return;
+        }
+        
+        btn.disabled = true;
+        btn.textContent = '⏳ Verificando...';
+        
+        try {
+            const response = await fetch('/recuperar/verificar-codigo', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON. stringify({ 
+                    email: emailRecuperacion, 
+                    codigo: codigoIngresado 
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                mostrarPaso3();
+            } else {
+                errorDiv.textContent = data.message || 'Código inválido';
+                limpiarInputsCodigo();
+            }
+        } catch (error) {
+            errorDiv.textContent = 'Error de conexión. Intenta de nuevo.';
+        }
+        
+        btn.disabled = false;
+        btn.textContent = '✅ Verificar Código';
+    }
+
+    function mostrarPaso3() {
+        clearInterval(timerInterval);
+        
+        document.getElementById('recuperar-paso2').classList.add('hidden');
+        document.getElementById('recuperar-paso3').classList.remove('hidden');
+        
+        document.getElementById('step2'). classList.remove('active');
+        document.getElementById('step2').classList.add('completed');
+        document.getElementById('line2').classList. add('active');
+        document.getElementById('step3').classList. add('active');
+        
+        document.getElementById('nueva-password').focus();
+    }
+
+    async function cambiarPassword() {
+        const nuevaPassword = document.getElementById('nueva-password'). value;
+        const confirmarPassword = document.getElementById('confirmar-password').value;
+        const confirmarError = document.getElementById('confirmar-error');
+        const btn = document.getElementById('btn-cambiar-password');
+        
+        if (! validarNuevaPassword()) {
+            return;
+        }
+        
+        if (nuevaPassword !== confirmarPassword) {
+            confirmarError.textContent = 'Las contraseñas no coinciden';
+            confirmarError.classList.add('show');
+            return;
+        }
+        
+        confirmarError.textContent = '';
+        confirmarError.classList.remove('show');
+        
+        btn.disabled = true;
+        btn.textContent = '⏳ Guardando...';
+        
+        try {
+            const response = await fetch('/recuperar/cambiar-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    email: emailRecuperacion, 
+                    codigo: codigoIngresado,
+                    nuevaPassword: nuevaPassword 
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                alert('¡Contraseña actualizada correctamente!  Ya puedes iniciar sesión.');
+                window.location.href = '/registro? modo=login';
+            } else {
+                confirmarError.textContent = data.message || 'Error al cambiar la contraseña';
+                confirmarError.classList.add('show');
+            }
+        } catch (error) {
+            confirmarError.textContent = 'Error de conexión. Intenta de nuevo.';
+            confirmarError.classList.add('show');
+        }
+        
+        btn.disabled = false;
+        btn.textContent = '🔐 Cambiar Contraseña';
+    }
+
+    function validarNuevaPassword() {
+        const password = document.getElementById('nueva-password').value;
+        
+        const requisitos = {
+            'nuevo-req-length': password.length >= 12,
+            'nuevo-req-uppercase': /[A-Z]/.test(password),
+            'nuevo-req-lowercase': /[a-z]/.test(password),
+            'nuevo-req-number': /[0-9]/.test(password),
+            'nuevo-req-special': /[!@#$%^&*(),.? ":{}|<>_\-\[\]\\\/~`+=;:]/.test(password)
+        };
+        
+        let todoValido = true;
+        
+        for (const [id, cumple] of Object.entries(requisitos)) {
+            const elemento = document.getElementById(id);
+            if (elemento) {
+                elemento.className = cumple ? 'requirement valid' : 'requirement invalid';
+                const icono = elemento.querySelector('.requirement-icon');
+                if (icono) {
+                    icono. textContent = cumple ? '✅' : '❌';
+                }
+                if (! cumple) todoValido = false;
+            }
+        }
+        
+        return todoValido;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const nuevaPasswordInput = document.getElementById('nueva-password');
+        if (nuevaPasswordInput) {
+            nuevaPasswordInput.addEventListener('input', validarNuevaPassword);
+        }
+    });
+
+    function iniciarTimer() {
+        const timerSpan = document.getElementById('timer');
+        const timerContainer = document.getElementById('timer-container');
+        
+        timerInterval = setInterval(function() {
+            tiempoRestante--;
+            
+            const minutos = Math.floor(tiempoRestante / 60);
+            const segundos = tiempoRestante % 60;
+            
+            timerSpan.textContent = minutos.toString().padStart(2, '0') + ':' + segundos.toString().padStart(2, '0');
+            
+            if (tiempoRestante <= 60) {
+                timerContainer.classList.add('warning');
+            }
+            
+            if (tiempoRestante <= 0) {
+                clearInterval(timerInterval);
+                timerSpan.textContent = 'Expirado';
+                document.getElementById('codigo-error').textContent = 'El código ha expirado.  Solicita uno nuevo.';
+            }
+        }, 1000);
+    }
+
+    async function reenviarCodigo() {
+        clearInterval(timerInterval);
+        limpiarInputsCodigo();
+        
+        const resendLink = document.getElementById('resend-link');
+        resendLink.textContent = 'Enviando...';
+        resendLink.style.pointerEvents = 'none';
+        
+        try {
+            const response = await fetch('/recuperar/enviar-codigo', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: emailRecuperacion })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                tiempoRestante = 900;
+                iniciarTimer();
+                document.getElementById('timer-container').classList.remove('warning');
+                document.getElementById('codigo-error').textContent = '✅ Nuevo código enviado';
+                document.getElementById('codigo-error').style.color = '#38a169';
+                setTimeout(() => {
+                    document.getElementById('codigo-error').textContent = '';
+                    document. getElementById('codigo-error').style.color = '';
+                }, 3000);
+            }
+        } catch (error) {
+            document.getElementById('codigo-error').textContent = 'Error al reenviar.  Intenta de nuevo.';
+        }
+        
+        resendLink.textContent = 'Reenviar';
+        resendLink.style. pointerEvents = 'auto';
+    }
+
+    function limpiarInputsCodigo() {
+        for (let i = 1; i <= 6; i++) {
+            document.getElementById('codigo' + i).value = '';
+        }
+        codigoIngresado = '';
+        document.getElementById('codigo1').focus();
+    }
+
+    function volverPaso1() {
+        clearInterval(timerInterval);
+        document.getElementById('recuperar-paso2').classList.add('hidden');
+        document.getElementById('recuperar-paso1').classList.remove('hidden');
+        
+        document.getElementById('step1'). classList.add('active');
+        document.getElementById('step1').classList.remove('completed');
+        document.getElementById('line1').classList.remove('active');
+        document.getElementById('step2').classList.remove('active');
+        
+        limpiarInputsCodigo();
+    }
+
+    function resetearRecuperacion() {
+        emailRecuperacion = '';
+        codigoIngresado = '';
+        clearInterval(timerInterval);
+        
+        document.getElementById('recuperar-paso1').classList.remove('hidden');
+        document.getElementById('recuperar-paso2').classList.add('hidden');
+        document.getElementById('recuperar-paso3').classList.add('hidden');
+        
+        document.getElementById('step1').classList.add('active');
+        document.getElementById('step1').classList.remove('completed');
+        document.getElementById('step2').classList.remove('active', 'completed');
+        document. getElementById('step3').classList.remove('active', 'completed');
+        document.getElementById('line1').classList. remove('active');
+        document. getElementById('line2').classList.remove('active');
+        
+        document.getElementById('recuperar-email').value = '';
+        limpiarInputsCodigo();
+        if (document.getElementById('nueva-password')) {
+            document. getElementById('nueva-password').value = '';
+        }
+        if (document.getElementById('confirmar-password')) {
+            document.getElementById('confirmar-password').value = '';
+        }
+    }
+
+    function togglePassword(inputId, btn) {
+        const input = document.getElementById(inputId);
+        if (input.type === 'password') {
+            input.type = 'text';
+            btn. textContent = '🔒';
+        } else {
+            input.type = 'password';
+            btn.textContent = '👁️';
+        }
+    }
+
+    // ========== FUNCIONES DE REGISTRO ==========
+
+    (function(){
+        const fechaNacimiento = document.getElementById('register-fechaNacimiento');
+        if(fechaNacimiento){
+            const hoy = new Date();
+            const minFecha = new Date();
+            minFecha.setFullYear(hoy.getFullYear() - 75);
+            const maxFecha = new Date();
+            maxFecha.setFullYear(hoy.getFullYear() - 16);
+            fechaNacimiento.min = minFecha.toISOString().split('T')[0];
+            fechaNacimiento.max = maxFecha.toISOString().split('T')[0];
+        }
+    })();
+
+    document. addEventListener('DOMContentLoaded', function() {
+        const nombreInput = document.getElementById('register-nombre');
+        const emailInput = document.getElementById('register-email');
+        const passwordInput = document. getElementById('register-password');
+        const fechaInput = document.getElementById('register-fechaNacimiento');
+        const submitBtn = document.getElementById('submit-btn');
+        
+        let formularioEnviado = false;
+        let camposModificados = { nombre: false, email: false, password: false, fecha: false };
+
+        const extensionesValidas = ['com','org','net','edu','gob','gov','mil','int','info','biz','name','pro','co','io','ai','me','tv','us','uk','ca','au','de','fr','es','it','jp','cn','in','br','mx','ar','cl','pe','ec','uy','py','bo','ve','cr','pa','do','gt','sv','hn','ni','pr'];
+        var dominiosConocidos = ['gmail.com', 'hotmail. com', 'hotmail.es', 'outlook.com', 'outlook.es', 'yahoo.com', 'yahoo.es', 'live.com', 'live.com.mx', 'msn.com', 'icloud.com', 'me.com', 'mail.com', 'protonmail.com', 'zoho.com', 'aol.com', 'yandex.com', 'gmx.com', 'gmx.es', 'correo.com', 'latinmail.com','smart.edu.co'];
+
+        function validarFormulario() {
+            const v1 = validarNombre();
+            const v2 = validarEmail();
+            const v3 = validarPassword();
+            const v4 = validarFecha();
+            submitBtn.disabled = !(v1 && v2 && v3 && v4);
+            return v1 && v2 && v3 && v4;
+        }
+
+        function validarNombre() {
+            const value = nombreInput.value.trim();
+            const err = document.getElementById('nombre-error');
+            if (! camposModificados.nombre && ! formularioEnviado) { 
+                limpiarError(nombreInput, err); 
+                return value !== ''; 
+            }
+            if (! value) { 
+                mostrarError(nombreInput, err, 'El nombre no puede estar vacío'); 
+                return false; 
+            }
+            if (value.length < 3) { 
+                mostrarError(nombreInput, err, 'Mínimo 3 caracteres'); 
+                return false; 
+            }
+            if (value. length > 30) { 
+                mostrarError(nombreInput, err, 'Máximo 30 caracteres'); 
+                return false; 
+            }
+            if (!/^[a-zA-ZÁÉÍÓÚáéíóúÑñ\s']+$/.test(value)) { 
+                mostrarError(nombreInput, err, 'Solo letras, espacios y apóstrofes'); 
+                return false; 
+            }
+            mostrarExito(nombreInput, err); 
+            return true;
+        }
+
+        function validarEmail() {
+            const value = emailInput.value.trim();
+            const err = document.getElementById('email-error');
+            if (! camposModificados.email && !formularioEnviado) { 
+                limpiarError(emailInput, err); 
+                return value !== ''; 
+            }
+            if (!value) { 
+                mostrarError(emailInput, err, 'El correo no puede estar vacío'); 
+                return false; 
+            }
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) { 
+                mostrarError(emailInput, err, 'Correo inválido'); 
+                return false; 
+            }
+            const partes = value.split('@');
+            if (partes.length !== 2) {
+                mostrarError(emailInput, err, 'Correo inválido');
+                return false;
+            }
+            const dominio = partes[1];
+            const partesDominio = dominio.split('.');
+            const ext = partesDominio[partesDominio.length - 1];
+            if (!extensionesValidas.includes(ext. toLowerCase())) { 
+                mostrarError(emailInput, err, 'Dominio no válido'); 
+                return false; 
+            }
+            mostrarExito(emailInput, err); 
+            return true;
+        }
+
+        function validarPassword() {
+            const value = passwordInput.value;
+            const err = document.getElementById('password-error');
+            const reqs = document.getElementById('password-requirements');
+            
+            if (camposModificados.password || formularioEnviado) { 
+                reqs.classList.add('show'); 
+            } else { 
+                reqs. classList.remove('show'); 
+                limpiarError(passwordInput, err); 
+                return value !== ''; 
+            }
+            
+            if (! value) { 
+                mostrarError(passwordInput, err, 'La contraseña no puede estar vacía'); 
+                actualizarRequisitos(value); 
+                return false; 
+            }
+            
+            const tieneMinimo = value.length >= 12;
+            const tieneMayuscula = /[A-Z]/.test(value);
+            const tieneMinuscula = /[a-z]/.test(value);
+            const tieneNumero = /[0-9]/.test(value);
+            const tieneEspecial = /[!@#$%^&*(),.? ":{}|<>_\-\[\]\\\/~`+=;:]/.test(value);
+            
+            actualizarRequisitos(value);
+            
+            if (!tieneMinimo || !tieneMayuscula || !tieneMinuscula || ! tieneNumero || !tieneEspecial) {
+                mostrarError(passwordInput, err, '');
+                return false;
+            }
+            
+            const contraseñasDebiles = ['123456', '12345678', 'password', 'contraseña', 'qwerty', 'abc123', '111111', '1234567890', 'iloveyou', 'admin', 'welcome', 'monkey', '000000', 'password1'];
+            if (contraseñasDebiles. includes(value. toLowerCase())) {
+                mostrarError(passwordInput, err, 'Esta contraseña es demasiado común');
+                return false;
+            }
+            
+            mostrarExito(passwordInput, err); 
+            return true;
+        }
+
+        function actualizarRequisitos(password) {
+            const requisitos = {
+                'req-length': password.length >= 12,
+                'req-uppercase': /[A-Z]/. test(password),
+                'req-lowercase': /[a-z]/.test(password),
+                'req-number': /[0-9]/.test(password),
+                'req-special': /[!@#$%^&*(),.?":{}|<>_\-\[\]\\\/~`+=;:]/.test(password)
+            };
+            
+            for (const [id, cumple] of Object.entries(requisitos)) {
+                const elemento = document. getElementById(id);
+                if (elemento) { 
+                    elemento.className = cumple ? 'requirement valid' : 'requirement invalid'; 
+                    const icono = elemento.querySelector('.requirement-icon');
+                    if (icono) {
+                        icono.textContent = cumple ? '✅' : '❌';
+                    }
+                }
+            }
+        }
+
+        function validarFecha() {
+            const value = fechaInput.value;
+            const err = document.getElementById('fecha-error');
+            if (!camposModificados.fecha && !formularioEnviado) { 
+                limpiarError(fechaInput, err); 
+                return value !== ''; 
+            }
+            if (!value) { 
+                mostrarError(fechaInput, err, 'La fecha es obligatoria'); 
+                return false; 
+            }
+            const fechaNac = new Date(value);
+            const hoy = new Date();
+            const min16 = new Date(); 
+            min16.setFullYear(hoy.getFullYear() - 16);
+            const max75 = new Date(); 
+            max75.setFullYear(hoy.getFullYear() - 75);
+            if (fechaNac > min16) { 
+                mostrarError(fechaInput, err, 'Debes tener al menos 16 años'); 
+                return false; 
+            }
+            if (fechaNac < max75) { 
+                mostrarError(fechaInput, err, 'Edad máxima 75 años'); 
+                return false; 
+            }
+            mostrarExito(fechaInput, err); 
+            return true;
+        }
+
+        function mostrarError(input, errorElement, mensaje) { 
+            input.classList.remove('is-valid'); 
+            input.classList.add('is-invalid'); 
+            errorElement.textContent = mensaje; 
+            errorElement.classList.add('show'); 
+        }
+        
+        function mostrarExito(input, errorElement) { 
+            input.classList.remove('is-invalid'); 
+            input.classList.add('is-valid'); 
+            errorElement.textContent = ''; 
+            errorElement.classList. remove('show'); 
+        }
+        
+        function limpiarError(input, errorElement) { 
+            input.classList.remove('is-invalid', 'is-valid'); 
+            errorElement.textContent = ''; 
+            errorElement.classList.remove('show'); 
+        }
+
+        nombreInput.addEventListener('input', function() { 
+            camposModificados.nombre = true; 
+            validarFormulario(); 
+        });
+        
+        emailInput.addEventListener('input', function() { 
+            camposModificados.email = true; 
+            validarFormulario(); 
+        });
+        
+        passwordInput.addEventListener('input', function() { 
+            camposModificados.password = true; 
+            validarFormulario(); 
+        });
+        
+        fechaInput.addEventListener('change', function() { 
+            camposModificados.fecha = true; 
+            validarFormulario(); 
+        });
+
+        validarFormulario();
+
+        document.getElementById('register-form').addEventListener('submit', function(e) {
+            formularioEnviado = true;
+            if (!validarFormulario()) { 
+                e.preventDefault(); 
+            }
+        });
+
+        document.querySelectorAll('.toggle-password-btn').forEach(function(btn){
+            const input = btn.parentElement.querySelector('input');
+            if (input && ! btn.hasAttribute('onclick')) {
+                btn.addEventListener('click', function(){
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        btn.textContent = '🔒';
+                    } else {
+                        input.type = 'password';
+                        btn. textContent = '👁️';
+                    }
+                });
+            }
+        });
+    });
+
+    function mostrarRegistro() {
+        document.getElementById('registro-section').style.display = 'flex';
+        document.getElementById('recuperar-section').style.display = 'none';
+        resetearRecuperacion();
+    }
+    
+    function mostrarRecuperar() {
+        document.getElementById('registro-section').style.display = 'none';
+        document.getElementById('recuperar-section'). style.display = 'flex';
+    }
+</script>
+
+</body>
+</html>

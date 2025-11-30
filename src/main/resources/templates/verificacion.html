@@ -1,0 +1,236 @@
+<! DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>GymTrack - Verificación de cuenta</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-start: #667eea;
+            --bg-end: #764ba2;
+            --card-bg: #fff;
+            --accent: #667eea;
+            --accent-dark: #5a67d8;
+            --success: #38a169;
+            --success-bg: rgba(56, 161, 105, 0.1);
+            --error: #e53e3e;
+            --error-bg: rgba(229, 62, 62, 0.1);
+            --muted: #6b7280;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+            background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
+            overflow: hidden;
+        }
+
+        .wrap {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 5vh 5vw;
+            width: 90%;
+            max-width: 550px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+        }
+
+        .card.success::before {
+            background: linear-gradient(90deg, #38a169, #48bb78);
+        }
+
+        .card.error::before {
+            background: linear-gradient(90deg, #e53e3e, #fc8181);
+        }
+
+        .emoji-container {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: clamp(70px, 12vw, 100px);
+            height: clamp(70px, 12vw, 100px);
+            margin: 0 auto 3vh;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0. 1));
+            font-size: clamp(35px, 6vw, 50px);
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        .card.success .emoji-container {
+            background: var(--success-bg);
+        }
+
+        .card.error .emoji-container {
+            background: var(--error-bg);
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        h1 {
+            margin: 0 0 2vh;
+            font-size: clamp(22px, 4vw, 30px);
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        .card.success h1 {
+            color: var(--success);
+        }
+
+        .card.error h1 {
+            color: var(--error);
+        }
+
+        p.lead {
+            margin: 0 auto 3vh;
+            color: #4a5568;
+            max-width: 90%;
+            font-size: clamp(14px, 2vw, 17px);
+            line-height: 1.7;
+        }
+
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            color: #fff;
+            padding: clamp(12px, 2vh, 18px) clamp(28px, 5vw, 40px);
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: clamp(14px, 2vw, 17px);
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0. 3);
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .card.success .btn {
+            background: linear-gradient(135deg, #38a169, #48bb78);
+            box-shadow: 0 4px 15px rgba(56, 161, 105, 0.3);
+        }
+
+        .card.success .btn:hover {
+            box-shadow: 0 8px 25px rgba(56, 161, 105, 0. 4);
+        }
+
+        .card.error .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .small {
+            margin-top: 3vh;
+            color: var(--muted);
+            font-size: clamp(12px, 1.5vw, 14px);
+        }
+
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: clamp(15px, 3vw, 30px);
+            margin: 2vh 0;
+            flex-wrap: wrap;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #4a5568;
+            font-size: clamp(12px, 1.8vw, 15px);
+        }
+
+        .feature-icon {
+            font-size: clamp(16px, 2.5vw, 22px);
+        }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <div class="card" th:classappend="${estado == 'ok'} ? 'success' : 'error'">
+        
+        <div class="emoji-container">
+            <span th:text="${estado == 'ok'} ? '🎉' : '⚠️'">🎉</span>
+        </div>
+
+        <h1 th:text="${estado == 'ok'} ? '¡Cuenta Verificada!' : 'Enlace inválido o expirado'">¡Cuenta Verificada!</h1>
+
+        <p class="lead" th:if="${estado == 'ok'}">
+            ¡Tu cuenta ha sido verificada con éxito! 🚀 Ya puedes iniciar sesión y disfrutar de todas las funciones de GymTrack. 
+        </p>
+
+        <p class="lead" th:if="${estado != 'ok'}"
+           th:text="${mensaje != null} ? ${mensaje} : 'Parece que este enlace ya no es válido o ha expirado.  Por favor, solicita uno nuevo.'">
+            Parece que este enlace ya no es válido o ha expirado. Por favor, solicita uno nuevo. 
+        </p>
+
+        <div th:if="${estado == 'ok'}" class="features">
+            <div class="feature">
+                <span class="feature-icon">🛒</span>
+                <span>Tienda fitness</span>
+            </div>
+            <div class="feature">
+                <span class="feature-icon">💪</span>
+                <span>Rutinas personalizadas</span>
+            </div>
+            <div class="feature">
+                <span class="feature-icon">📊</span>
+                <span>Seguimiento</span>
+            </div>
+        </div>
+
+     <div th:if="${estado == 'ok'}" style="margin-top: 2vh;">
+    <!-- CORREGIDO: Ir a la tienda correctamente -->
+    <a th:href="@{/tienda}" class="btn">🛒 Ir a la Tienda</a>
+</div>
+
+        <div th:if="${estado != 'ok'}" style="margin-top: 2vh;">
+            <a th:href="@{/registro}" class="btn">🔄 Volver al Registro</a>
+        </div>
+
+        <footer class="small" th:if="${estado == 'ok'}">
+            ¡Estamos contigo en cada paso! 💪
+        </footer>
+        
+        <footer class="small" th:if="${estado != 'ok'}">
+            ¿Problemas?  Contacta a soporte. 
+        </footer>
+    </div>
+</div>
+</body>
+</html>

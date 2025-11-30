@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GymTrack - Tienda Fitness</title>
+    <link href="https://cdn.jsdelivr. net/npm/bootstrap@5. 1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1a237e;
+            --secondary-color: #3949ab;
+            --accent-color: #ff6f00;
+            --success-color: #2e7d32;
+            --light-bg: #f5f5f5;
+        }
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            overflow-x: hidden;
+            max-width: 100vw;
+        }
+
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #e0e0e0;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-color);
+        }
+
+        /* ========== MODAL DE BIENVENIDA ========== */
+        .welcome-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .welcome-modal-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .welcome-modal {
+            background: white;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.4s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .welcome-modal-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 30px 25px;
+            text-align: center;
+        }
+
+        .welcome-modal-header .icon {
+            font-size: 3. 5rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .welcome-modal-header h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .welcome-modal-header p {
+            font-size: 1rem;
+            opacity: 0. 9;
+            margin: 0;
+        }
+
+        .welcome-modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .welcome-modal-close:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: rotate(90deg);
+        }
+
+        .welcome-modal-body {
+            padding: 30px 25px;
+        }
+
+        .welcome-features {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 25px 0;
+        }
+
+        .welcome-features li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.95rem;
+            color: #444;
+        }
+
+        .welcome-features li:last-child {
+            border-bottom: none;
+        }
+
+        .welcome-features li i {
+            color: var(--success-color);
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+
+        .welcome-modal-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn-create-routine {
+            background: linear-gradient(135deg, var(--accent-color) 0%, #ff8f00 100%);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .btn-create-routine:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 111, 0, 0.4);
+            color: white;
+        }
+
+        .btn-create-routine i {
+            font-size: 1.3rem;
+        }
+
+        .btn-continue-shopping {
+            background: transparent;
+            color: #666;
+            border: none;
+            padding: 10px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            text-decoration: underline;
+        }
+
+        .btn-continue-shopping:hover {
+            color: var(--primary-color);
+        }
+
+        /* ========== TOP BAR ========== */
+        .top-bar {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 10px 0;
+            font-size: 0.85rem;
+        }
+
+        .top-bar .container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .top-bar-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 15px;
+        }
+
+        .top-bar-item i {
+            font-size: 1.1rem;
+        }
+
+        /* ========== HEADER ========== */
+        .main-header {
+            background: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .logo span {
+            color: var(--accent-color);
+        }
+
+        .search-box {
+            flex: 1;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 50px 12px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(26, 35, 126, 0.1);
+        }
+
+        .search-box button {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--primary-color);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .search-box button:hover {
+            background: var(--secondary-color);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .header-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #333;
+            font-size: 0.75rem;
+            transition: color 0.3s ease;
+        }
+
+        .header-btn:hover {
+            color: var(--primary-color);
+        }
+
+        .header-btn i {
+            font-size: 1.4rem;
+            margin-bottom: 2px;
+        }
+
+        .cart-btn {
+            position: relative;
+            background: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .cart-btn:hover {
+            background: var(--secondary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--accent-color);
+            color: white;
+            font-size: 0.7rem;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* ========== NAVIGATION ========== */
+        .main-nav {
+            background: var(--primary-color);
+        }
+
+        .nav-list {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-list li a {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 15px 25px;
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .nav-list li a:hover,
+        .nav-list li a.active {
+            background: rgba(255,255,255,0.1);
+            border-bottom-color: var(--accent-color);
+        }
+
+        .nav-list li a.text-warning {
+            color: #ffc107 !important;
+        }
+
+        /* ========== AGENDA BANNER ========== */
+        .agenda-banner {
+            background: linear-gradient(135deg, var(--accent-color) 0%, #ff8f00 100%);
+            padding: 12px 0;
+            text-align: center;
+        }
+
+        .agenda-banner a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .agenda-banner a:hover {
+            transform: scale(1.02);
+        }
+
+        .agenda-banner i {
+            font-size: 1.2rem;
+        }
+
+        .pulse-icon {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* ========== HERO SECTION ========== */
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 60px 0;
+            color: white;
+            text-align: center;
+        }
+
+        .hero-section h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+        }
+
+        .hero-section p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 25px;
+        }
+
+        .hero-btn {
+            background: white;
+            color: var(--primary-color);
+            padding: 12px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .hero-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            color: var(--primary-color);
+        }
+
+        /* ========== SECTIONS ========== */
+        .section-title {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .section-title h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+
+        .section-title p {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        /* ========== CATEGORY CARDS ========== */
+        .categories-section {
+            padding: 40px 0;
+        }
+
+        .category-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px 20px;
+            text-align: center;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: block;
+            height: 100%;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .category-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .category-card h5 {
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+
+        .category-card p {
+            color: #888;
+            font-size: 0.85rem;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        /* ========== PRODUCT CARDS ========== */
+        .products-section {
+            padding: 50px 0;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+
+        .product-image {
+            position: relative;
+            height: 180px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .product-image img {
+            max-width: 85%;
+            max-height: 85%;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover .product-image img {
+            transform: scale(1.05);
+        }
+
+        .product-body {
+            padding: 15px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-category {
+            color: var(--accent-color);
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .product-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+            line-height: 1.3;
+        }
+
+        .product-name a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .product-name a:hover {
+            color: var(--primary-color);
+        }
+
+        .product-price {
+            margin-top: auto;
+        }
+
+        .price-current {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .btn-add-cart {
+            margin-top: 12px;
+            width: 100%;
+            padding: 10px;
+            border: 2px solid var(--primary-color);
+            background: white;
+            color: var(--primary-color);
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0. 3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            text-decoration: none;
+        }
+
+        .btn-add-cart:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* ========== TRAINERS SECTION ========== */
+        .trainers-section {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+            padding: 50px 0;
+        }
+
+        .trainer-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0. 3s ease;
+        }
+
+        .trainer-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.12);
+        }
+
+        .trainer-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .trainer-card h5 {
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+
+        .trainer-card p {
+            color: #888;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+        }
+
+        /* ========== FOOTER ========== */
+        .main-footer {
+            background: #f8f9fa;
+            color: #333;
+            text-align: center;
+            padding: 30px 0;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .footer-phrase {
+            font-size: 1.1rem;
+            font-style: italic;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .footer-links a {
+            color: #666;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+
+        /* ========== BOTTOM BAR ========== */
+        .bottom-bar {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 15px 0;
+            text-align: center;
+        }
+
+        .bottom-bar p {
+            margin: 0;
+            font-size: 0.9rem;
+            opacity: 0.95;
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 992px) {
+            .header-container {
+                flex-wrap: wrap;
+            }
+            
+            .search-box {
+                order: 3;
+                max-width: 100%;
+                width: 100%;
+                margin-top: 15px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .top-bar .container {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .header-container {
+                justify-content: center;
+            }
+
+            .logo {
+                font-size: 1.6rem;
+            }
+
+            .nav-list li a {
+                padding: 12px 12px;
+                font-size: 0.8rem;
+            }
+
+            .hero-section h1 {
+                font-size: 1.6rem;
+            }
+
+            .hero-section {
+                padding: 40px 0;
+            }
+
+            .section-title h2 {
+                font-size: 1.4rem;
+            }
+
+            .category-icon {
+                font-size: 2. 5rem;
+            }
+
+            .category-card {
+                padding: 20px 15px;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .welcome-modal {
+                width: 95%;
+                margin: 10px;
+            }
+
+            .welcome-modal-header {
+                padding: 25px 20px;
+            }
+
+            .welcome-modal-header h2 {
+                font-size: 1.5rem;
+            }
+
+            .welcome-modal-body {
+                padding: 25px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- MODAL DE BIENVENIDA -->
+    <div class="welcome-modal-overlay" id="welcomeModal">
+        <div class="welcome-modal">
+            <button class="welcome-modal-close" onclick="closeWelcomeModal()">
+                <i class="bi bi-x-lg"></i>
+            </button>
+            <div class="welcome-modal-header">
+                <span class="icon">🏋️</span>
+                <h2>¡Bienvenido a GymTrack!</h2>
+                <p>Mas que una tienda, tu companero de entrenamiento</p>
+            </div>
+            <div class="welcome-modal-body">
+                <ul class="welcome-features">
+                    <li>
+                        <i class="bi bi-calendar-check-fill"></i>
+                        <span>Crea tu agenda de rutinas personalizada</span>
+                    </li>
+                    <li>
+                        <i class="bi bi-graph-up-arrow"></i>
+                        <span>Seguimiento detallado de tu progreso</span>
+                    </li>
+                    <li>
+                        <i class="bi bi-people-fill"></i>
+                        <span>Conecta con entrenadores profesionales</span>
+                    </li>
+                    <li>
+                        <i class="bi bi-bag-check-fill"></i>
+                        <span>Encuentra los mejores productos fitness</span>
+                    </li>
+                </ul>
+                <div class="welcome-modal-actions">
+                    <a href="/registro" class="btn-create-routine">
+                        <i class="bi bi-rocket-takeoff-fill"></i>
+                        Crear mi rutina ahora
+                    </a>
+                    <button class="btn-continue-shopping" onclick="closeWelcomeModal()">
+                        Continuar viendo la tienda
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-bar-item">
+                <i class="bi bi-credit-card"></i>
+                <span>Multiples medios de pago</span>
+            </div>
+            <div class="top-bar-item">
+                <i class="bi bi-shield-check"></i>
+                <span>Compra 100% segura</span>
+            </div>
+            <div class="top-bar-item">
+                <i class="bi bi-arrow-repeat"></i>
+                <span>Cambios sin costo</span>
+            </div>
+            <div class="top-bar-item">
+                <i class="bi bi-geo-alt"></i>
+                <span>Recoge en el gimnasio</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN HEADER -->
+    <header class="main-header">
+        <div class="container">
+            <div class="header-container">
+                <a href="/" class="logo">Gym<span>Track</span></a>
+                <form class="search-box" action="/buscar" method="GET">
+                    <input type="text" name="q" placeholder="Buscar productos... ">
+                    <button type="submit"><i class="bi bi-search"></i></button>
+                </form>
+                <div class="header-actions">
+                    <a href="/registro" class="header-btn">
+                        <i class="bi bi-person-circle"></i>
+                        <span>Mi cuenta</span>
+                    </a>
+                    <a href="/carrito" class="cart-btn">
+                        <i class="bi bi-cart3"></i>
+                        <span>Mi Carrito</span>
+                        <span class="cart-badge" id="cart-count">0</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- NAVIGATION -->
+    <nav class="main-nav">
+        <div class="container">
+            <ul class="nav-list">
+                <li><a href="/" class="active"><i class="bi bi-house-door"></i> Inicio</a></li>
+                <li><a href="/ofertas"><i class="bi bi-tag-fill"></i> Ofertas</a></li>
+                <li><a href="/nuevos"><i class="bi bi-stars"></i> Nuevos</a></li>
+                <li><a href="#entrenadores"><i class="bi bi-people-fill"></i> Entrenadores</a></li>
+                <li><a href="/trabaja-con-nosotros" class="text-warning"><i class="bi bi-briefcase-fill"></i> Trabaja con nosotros</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- AGENDA BANNER -->
+    <div class="agenda-banner">
+        <a href="/registro">
+            <i class="bi bi-calendar-check pulse-icon"></i>
+            <span>Crea tu agenda de entrenamiento y seguimiento personalizado</span>
+            <i class="bi bi-arrow-right-circle"></i>
+        </a>
+    </div>
+
+    <!-- HERO SECTION -->
+    <section class="hero-section">
+        <div class="container">
+            <h1>Todo para tu entrenamiento en un solo lugar</h1>
+            <p>Ropa deportiva, suplementos y equipos de las mejores marcas</p>
+            <a href="#productos" class="hero-btn">Ver Productos</a>
+        </div>
+    </section>
+
+    <!-- CATEGORIES SECTION -->
+    <section class="categories-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Nuestras Categorias</h2>
+                <p>Encuentra todo lo que necesitas</p>
+            </div>
+            <div class="row g-4 justify-content-center">
+                <!-- Ropa Deportiva -->
+                <div class="col-md-4">
+                    <a href="/categoria/1" class="category-card">
+                        <span class="category-icon">👕</span>
+                        <h5>Ropa Deportiva</h5>
+                        <p>Camisetas, leggings, shorts y mas</p>
+                    </a>
+                </div>
+                <!-- Suplementos -->
+                <div class="col-md-4">
+                    <a href="/categoria/2" class="category-card">
+                        <span class="category-icon">💊</span>
+                        <h5>Suplementos</h5>
+                        <p>Proteinas, creatina, pre-entrenos</p>
+                    </a>
+                </div>
+                <!-- Equipos -->
+                <div class="col-md-4">
+                    <a href="/categoria/3" class="category-card">
+                        <span class="category-icon">🏋️</span>
+                        <h5>Equipos</h5>
+                        <p>Mancuernas, bandas, colchonetas</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURED PRODUCTS -->
+    <section class="products-section bg-white" id="productos">
+        <div class="container">
+            <div class="section-title">
+                <h2>Productos Destacados</h2>
+                <p>Los mas visitados por nuestros clientes</p>
+            </div>
+            <div class="row g-3">
+                <div class="col-6 col-md-4 col-lg-3" th:each="producto : ${productosDestacados}">
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img th:src="${producto.imagenUrl}" alt="Producto" 
+                                 onerror="this.src='https://via.placeholder.com/200x200/f8f9fa/333? text=GymTrack'">
+                        </div>
+                        <div class="product-body">
+                            <div class="product-category" th:text="${producto.categoria. nombre}">Categoria</div>
+                            <h6 class="product-name">
+                                <a th:href="@{'/producto/' + ${producto.id}}" th:text="${producto.nombre}">Nombre del producto</a>
+                            </h6>
+                            <div class="product-price">
+                                <div class="price-current">
+                                    $ <span th:text="${#numbers.formatDecimal(producto.precioMostrar, 0, 'COMMA', 0, 'POINT')}">85.000</span>
+                                </div>
+                            </div>
+                            <a href="/registro" class="btn-add-cart">
+                                <i class="bi bi-cart-plus"></i> Agregar al carrito
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TRAINERS SECTION -->
+    <section class="trainers-section" id="entrenadores">
+        <div class="container">
+            <div class="section-title">
+                <h2>Nuestros Entrenadores</h2>
+                <p>Profesionales listos para ayudarte</p>
+            </div>
+            <div class="row g-4 justify-content-center">
+                <div class="col-md-4 col-lg-3">
+                    <div class="trainer-card">
+                        <div class="trainer-avatar">💪</div>
+                        <h5>Carlos Martinez</h5>
+                        <p>Fuerza y Acondicionamiento</p>
+                        <a href="/registro" class="btn btn-outline-primary btn-sm">Agendar Cita</a>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-3">
+                    <div class="trainer-card">
+                        <div class="trainer-avatar">🧘</div>
+                        <h5>Maria Garcia</h5>
+                        <p>Yoga y Flexibilidad</p>
+                        <a href="/registro" class="btn btn-outline-primary btn-sm">Agendar Cita</a>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-3">
+                    <div class="trainer-card">
+                        <div class="trainer-avatar">🏃</div>
+                        <h5>Juan Rodriguez</h5>
+                        <p>Cardio y HIIT</p>
+                        <a href="/registro" class="btn btn-outline-primary btn-sm">Agendar Cita</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <p class="footer-phrase">"Tu mejor version comienza con un solo paso.  Hazlo hoy."</p>
+                <div class="footer-links">
+                    <a href="#">Contacto</a>
+                    <a href="#">Terminos y Condiciones</a>
+                    <a href="#">Politica de Privacidad</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- BOTTOM BAR -->
+    <div class="bottom-bar">
+        <div class="container">
+            <p>&copy; 2025 GymTrack. Todos los derechos reservados.</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr. net/npm/bootstrap@5. 1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Funcion para cerrar el modal
+        function closeWelcomeModal() {
+            document.getElementById('welcomeModal').classList.add('hidden');
+            // Guardar en sessionStorage para no mostrar de nuevo en esta sesion
+            sessionStorage.setItem('welcomeModalShown', 'true');
+        }
+
+        // Verificar si ya se mostro el modal en esta sesion
+        window.onload = function() {
+            if (sessionStorage.getItem('welcomeModalShown') === 'true') {
+                document.getElementById('welcomeModal').classList.add('hidden');
+            }
+        }
+
+        // Cerrar modal al hacer clic fuera de el
+        document.getElementById('welcomeModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeWelcomeModal();
+            }
+        });
+
+        // Cerrar modal con tecla Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeWelcomeModal();
+            }
+        });
+    </script>
+</body>
+</html>
